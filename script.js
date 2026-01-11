@@ -1,8 +1,50 @@
 // ============================================
-// Lightbox Functionality
+// Gallery Filter Functionality
 // ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtns = document.querySelectorAll('.toggle-btn');
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    let currentFilter = 'color';
+
+    // Filter gallery
+    function filterGallery(filter) {
+        currentFilter = filter;
+
+        galleryItems.forEach(item => {
+            if (item.dataset.type === filter) {
+                item.classList.remove('hidden');
+            } else {
+                item.classList.add('hidden');
+            }
+        });
+
+        // Update active button
+        toggleBtns.forEach(btn => {
+            if (btn.dataset.filter === filter) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+
+    // Initialize filter on page load
+    if (toggleBtns.length > 0) {
+        filterGallery('color');
+    }
+
+    // Toggle button click handlers
+    toggleBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterGallery(btn.dataset.filter);
+        });
+    });
+
+    // ============================================
+    // Lightbox Functionality
+    // ============================================
+
     const lightbox = document.getElementById('lightbox');
     const lightboxImg = document.getElementById('lightbox-img');
     const lightboxTitle = document.getElementById('lightbox-title');
@@ -11,19 +53,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevBtn = document.querySelector('.lightbox-prev');
     const nextBtn = document.querySelector('.lightbox-next');
 
-    const galleryItems = document.querySelectorAll('.gallery-item');
     let currentIndex = 0;
 
+    // Get visible gallery items
+    function getVisibleItems() {
+        return Array.from(galleryItems).filter(item => !item.classList.contains('hidden'));
+    }
+
     // Open lightbox
-    function openLightbox(index) {
-        currentIndex = index;
-        const item = galleryItems[index];
+    function openLightbox(item) {
+        const visibleItems = getVisibleItems();
+        currentIndex = visibleItems.indexOf(item);
+
         const img = item.querySelector('img');
         const title = item.querySelector('.photo-title');
         const location = item.querySelector('.photo-location');
 
         // Get higher resolution version of the image
-        const imgSrc = img.src.replace(/\/\d+\/\d+$/, '/1200/800');
+        let imgSrc = img.src;
+        // Handle picsum photos resolution upgrade
+        if (imgSrc.includes('picsum.photos')) {
+            imgSrc = imgSrc.replace(/\/(\d+)\/(\d+)/, '/1200/800');
+        }
 
         lightboxImg.src = imgSrc;
         lightboxImg.alt = img.alt;
@@ -42,19 +93,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Navigate to previous image
     function prevImage() {
-        currentIndex = (currentIndex - 1 + galleryItems.length) % galleryItems.length;
-        openLightbox(currentIndex);
+        const visibleItems = getVisibleItems();
+        currentIndex = (currentIndex - 1 + visibleItems.length) % visibleItems.length;
+        openLightbox(visibleItems[currentIndex]);
     }
 
     // Navigate to next image
     function nextImage() {
-        currentIndex = (currentIndex + 1) % galleryItems.length;
-        openLightbox(currentIndex);
+        const visibleItems = getVisibleItems();
+        currentIndex = (currentIndex + 1) % visibleItems.length;
+        openLightbox(visibleItems[currentIndex]);
     }
 
     // Event listeners for gallery items
-    galleryItems.forEach((item, index) => {
-        item.addEventListener('click', () => openLightbox(index));
+    galleryItems.forEach(item => {
+        item.addEventListener('click', () => {
+            if (!item.classList.contains('hidden')) {
+                openLightbox(item);
+            }
+        });
     });
 
     // Event listeners for lightbox controls

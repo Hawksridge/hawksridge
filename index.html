@@ -28,9 +28,16 @@
         </section>
 
         <section class="gallery-section">
+            <!-- Gallery Toggle -->
+            <div class="gallery-toggle">
+                <button class="toggle-btn active" data-filter="color">Color</button>
+                <span class="toggle-divider">/</span>
+                <button class="toggle-btn" data-filter="bw">B&W</button>
+            </div>
+
             <div class="gallery-grid">
-                <!-- Landscape photos -->
-                <div class="gallery-item landscape" data-category="landscape">
+                <!-- COLOR PHOTOS -->
+                <div class="gallery-item landscape" data-type="color">
                     <img src="https://picsum.photos/seed/mt1/800/533" alt="Mountain landscape at dawn" loading="lazy">
                     <div class="gallery-overlay">
                         <span class="photo-title">Dawn Over the Peaks</span>
@@ -38,7 +45,7 @@
                     </div>
                 </div>
 
-                <div class="gallery-item portrait" data-category="portrait">
+                <div class="gallery-item portrait" data-type="color">
                     <img src="https://picsum.photos/seed/pt1/533/800" alt="Portrait in golden hour" loading="lazy">
                     <div class="gallery-overlay">
                         <span class="photo-title">Golden Hour</span>
@@ -46,7 +53,7 @@
                     </div>
                 </div>
 
-                <div class="gallery-item landscape" data-category="street">
+                <div class="gallery-item landscape" data-type="color">
                     <img src="https://picsum.photos/seed/st1/800/533" alt="Street scene" loading="lazy">
                     <div class="gallery-overlay">
                         <span class="photo-title">Morning Commute</span>
@@ -54,7 +61,7 @@
                     </div>
                 </div>
 
-                <div class="gallery-item square" data-category="nature">
+                <div class="gallery-item square" data-type="color">
                     <img src="https://picsum.photos/seed/sq1/600/600" alt="Nature close-up" loading="lazy">
                     <div class="gallery-overlay">
                         <span class="photo-title">After the Rain</span>
@@ -62,7 +69,7 @@
                     </div>
                 </div>
 
-                <div class="gallery-item landscape" data-category="landscape">
+                <div class="gallery-item landscape" data-type="color">
                     <img src="https://picsum.photos/seed/mt2/800/450" alt="Ocean sunset" loading="lazy">
                     <div class="gallery-overlay">
                         <span class="photo-title">Pacific Dreams</span>
@@ -70,7 +77,7 @@
                     </div>
                 </div>
 
-                <div class="gallery-item portrait" data-category="architecture">
+                <div class="gallery-item portrait" data-type="color">
                     <img src="https://picsum.photos/seed/ar1/533/800" alt="Architecture detail" loading="lazy">
                     <div class="gallery-overlay">
                         <span class="photo-title">Gothic Revival</span>
@@ -78,7 +85,7 @@
                     </div>
                 </div>
 
-                <div class="gallery-item landscape" data-category="street">
+                <div class="gallery-item landscape" data-type="color">
                     <img src="https://picsum.photos/seed/st2/800/533" alt="Night street" loading="lazy">
                     <div class="gallery-overlay">
                         <span class="photo-title">Neon Nights</span>
@@ -86,7 +93,7 @@
                     </div>
                 </div>
 
-                <div class="gallery-item square" data-category="nature">
+                <div class="gallery-item square" data-type="color">
                     <img src="https://picsum.photos/seed/sq2/600/600" alt="Wildlife" loading="lazy">
                     <div class="gallery-overlay">
                         <span class="photo-title">Silent Observer</span>
@@ -94,64 +101,65 @@
                     </div>
                 </div>
 
-                <div class="gallery-item landscape" data-category="landscape">
-                    <img src="https://picsum.photos/seed/mt3/800/533" alt="Desert landscape" loading="lazy">
+                <!-- B&W PHOTOS -->
+                <div class="gallery-item landscape" data-type="bw">
+                    <img src="https://picsum.photos/seed/bw1/800/533?grayscale" alt="Desert landscape" loading="lazy">
                     <div class="gallery-overlay">
                         <span class="photo-title">Endless Sands</span>
                         <span class="photo-location">Sahara Desert</span>
                     </div>
                 </div>
 
-                <div class="gallery-item portrait" data-category="portrait">
-                    <img src="https://picsum.photos/seed/pt2/533/800" alt="Environmental portrait" loading="lazy">
+                <div class="gallery-item portrait" data-type="bw">
+                    <img src="https://picsum.photos/seed/bw2/533/800?grayscale" alt="Environmental portrait" loading="lazy">
                     <div class="gallery-overlay">
                         <span class="photo-title">The Craftsman</span>
                         <span class="photo-location">Kyoto, Japan</span>
                     </div>
                 </div>
 
-                <div class="gallery-item landscape" data-category="architecture">
-                    <img src="https://picsum.photos/seed/ar2/800/533" alt="Modern architecture" loading="lazy">
+                <div class="gallery-item landscape" data-type="bw">
+                    <img src="https://picsum.photos/seed/bw3/800/533?grayscale" alt="Modern architecture" loading="lazy">
                     <div class="gallery-overlay">
                         <span class="photo-title">Lines & Light</span>
                         <span class="photo-location">Dubai, UAE</span>
                     </div>
                 </div>
 
-                <div class="gallery-item square" data-category="street">
-                    <img src="https://picsum.photos/seed/sq3/600/600" alt="Urban detail" loading="lazy">
+                <div class="gallery-item square" data-type="bw">
+                    <img src="https://picsum.photos/seed/bw4/600/600?grayscale" alt="Urban detail" loading="lazy">
                     <div class="gallery-overlay">
                         <span class="photo-title">Urban Geometry</span>
                         <span class="photo-location">New York City</span>
                     </div>
                 </div>
 
-                <div class="gallery-item landscape" data-category="nature">
-                    <img src="https://picsum.photos/seed/mt4/800/500" alt="Forest scene" loading="lazy">
+                <div class="gallery-item landscape" data-type="bw">
+                    <img src="https://picsum.photos/seed/bw5/800/500?grayscale" alt="Forest scene" loading="lazy">
                     <div class="gallery-overlay">
                         <span class="photo-title">Misty Morning</span>
                         <span class="photo-location">Black Forest, Germany</span>
                     </div>
                 </div>
 
-                <div class="gallery-item portrait" data-category="landscape">
-                    <img src="https://picsum.photos/seed/pt3/533/800" alt="Waterfall" loading="lazy">
+                <div class="gallery-item portrait" data-type="bw">
+                    <img src="https://picsum.photos/seed/bw6/533/800?grayscale" alt="Waterfall" loading="lazy">
                     <div class="gallery-overlay">
                         <span class="photo-title">Cascading Light</span>
                         <span class="photo-location">Iceland</span>
                     </div>
                 </div>
 
-                <div class="gallery-item landscape" data-category="street">
-                    <img src="https://picsum.photos/seed/st3/800/533" alt="Market scene" loading="lazy">
+                <div class="gallery-item landscape" data-type="bw">
+                    <img src="https://picsum.photos/seed/bw7/800/533?grayscale" alt="Street scene" loading="lazy">
                     <div class="gallery-overlay">
-                        <span class="photo-title">Market Colors</span>
+                        <span class="photo-title">Shadows of the Souk</span>
                         <span class="photo-location">Marrakech, Morocco</span>
                     </div>
                 </div>
 
-                <div class="gallery-item square" data-category="portrait">
-                    <img src="https://picsum.photos/seed/sq4/600/600" alt="Portrait" loading="lazy">
+                <div class="gallery-item square" data-type="bw">
+                    <img src="https://picsum.photos/seed/bw8/600/600?grayscale" alt="Portrait" loading="lazy">
                     <div class="gallery-overlay">
                         <span class="photo-title">Contemplation</span>
                         <span class="photo-location">Venice, Italy</span>

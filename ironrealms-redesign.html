@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iron Realms Entertainment | Redesign Concept</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-bg: #0a0a0f;
+            --color-bg-light: #12121a;
+            --color-bg-card: #1a1a24;
+            --color-gold: #c9a227;
+            --color-gold-light: #e8c547;
+            --color-text: #f0f0f0;
+            --color-text-dim: #8a8a9a;
+            --color-accent: #6b4c9a;
+            --font-display: 'Cinzel', serif;
+            --font-body: 'Raleway', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1.5rem 4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(to bottom, rgba(10, 10, 15, 0.95), transparent);
+            transition: background 0.3s ease;
+        }
+
+        .nav.scrolled {
+            background: rgba(10, 10, 15, 0.98);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--color-gold);
+            text-decoration: none;
+            letter-spacing: 0.1em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--color-text-dim);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-gold);
+        }
+
+        .nav-cta {
+            padding: 0.75rem 1.5rem;
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--color-bg);
+            background: var(--color-gold);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            background: var(--color-gold-light);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 6rem 2rem;
+            background:
+                radial-gradient(ellipse at center top, rgba(107, 76, 154, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at center bottom, rgba(201, 162, 39, 0.1) 0%, transparent 50%),
+                var(--color-bg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://www.ironrealms.com/wp-content/uploads/2023/08/AdobeStock_607041423-scaled-1200x675-cropped.jpeg') center/cover;
+            opacity: 0.15;
+            filter: blur(2px);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        .hero-tagline {
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--color-gold);
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 500;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--color-text) 0%, var(--color-gold) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: 1.2rem;
+            font-weight: 300;
+            color: var(--color-text-dim);
+            max-width: 600px;
+            margin: 0 auto 3rem;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--color-gold);
+            color: var(--color-bg);
+        }
+
+        .btn-primary:hover {
+            background: var(--color-gold-light);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(201, 162, 39, 0.3);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-text);
+            border: 1px solid var(--color-text-dim);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--color-gold);
+            color: var(--color-gold);
+        }
+
+        /* Section Styles */
+        section {
+            padding: 8rem 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 5rem;
+        }
+
+        .section-label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--color-gold);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-description {
+            font-size: 1.1rem;
+            color: var(--color-text-dim);
+            line-height: 1.8;
+        }
+
+        /* Games Section */
+        .games {
+            background: var(--color-bg-light);
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .game-card {
+            background: var(--color-bg-card);
+            border: 1px solid rgba(201, 162, 39, 0.1);
+            overflow: hidden;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(201, 162, 39, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--color-gold), var(--color-accent));
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .game-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .game-image {
+            height: 200px;
+            background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-bg) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .game-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: all 0.4s ease;
+        }
+
+        .game-card:hover .game-image img {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        .game-content {
+            padding: 2rem;
+        }
+
+        .game-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            padding: 0.4rem 0.8rem;
+            background: rgba(201, 162, 39, 0.1);
+            color: var(--color-gold);
+            margin-bottom: 1rem;
+        }
+
+        .game-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-subtitle {
+            font-size: 0.9rem;
+            color: var(--color-text-dim);
+            font-style: italic;
+            margin-bottom: 1rem;
+        }
+
+        .game-description {
+            font-size: 0.95rem;
+            color: var(--color-text-dim);
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .game-link {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--color-gold);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: gap 0.3s ease;
+        }
+
+        .game-link:hover {
+            gap: 1rem;
+        }
+
+        /* Features Section */
+        .features {
+            background: var(--color-bg);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            background: linear-gradient(135deg, rgba(201, 162, 39, 0.1) 0%, rgba(107, 76, 154, 0.1) 100%);
+            border-radius: 50%;
+            border: 1px solid rgba(201, 162, 39, 0.2);
+        }
+
+        .feature-title {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-description {
+            font-size: 0.95rem;
+            color: var(--color-text-dim);
+            line-height: 1.7;
+        }
+
+        /* Testimonial Section */
+        .testimonials {
+            background: var(--color-bg-light);
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .testimonial {
+            background: var(--color-bg-card);
+            padding: 2.5rem;
+            border-left: 3px solid var(--color-gold);
+        }
+
+        .testimonial-quote {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: var(--color-text);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-author {
+            font-weight: 600;
+            color: var(--color-gold);
+        }
+
+        .testimonial-role {
+            font-size: 0.85rem;
+            color: var(--color-text-dim);
+        }
+
+        /* CTA Section */
+        .cta {
+            background:
+                radial-gradient(ellipse at center, rgba(107, 76, 154, 0.2) 0%, transparent 60%),
+                var(--color-bg);
+            text-align: center;
+        }
+
+        .cta-title {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-description {
+            font-size: 1.1rem;
+            color: var(--color-text-dim);
+            max-width: 500px;
+            margin: 0 auto 2.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--color-bg-card);
+            padding: 4rem 2rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr repeat(3, 1fr);
+            gap: 3rem;
+        }
+
+        .footer-brand {
+            max-width: 300px;
+        }
+
+        .footer-logo {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--color-gold);
+            margin-bottom: 1rem;
+        }
+
+        .footer-description {
+            font-size: 0.9rem;
+            color: var(--color-text-dim);
+            line-height: 1.7;
+        }
+
+        .footer-column h4 {
+            font-family: var(--font-display);
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-text);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            font-size: 0.9rem;
+            color: var(--color-text-dim);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--color-gold);
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 3rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--color-text-dim);
+        }
+
+        /* Back to Portfolio Link */
+        .back-link {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            padding: 1rem 1.5rem;
+            background: var(--color-gold);
+            color: var(--color-bg);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: var(--color-gold-light);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .nav {
+                padding: 1rem 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 280px;
+                text-align: center;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <a href="#" class="nav-logo">Iron Realms</a>
+        <ul class="nav-links">
+            <li><a href="#games">Games</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#about">About MUDs</a></li>
+            <li><a href="#community">Community</a></li>
+        </ul>
+        <button class="nav-cta">Play Now</button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <p class="hero-tagline">Since 1997</p>
+            <h1>Where Words Build Worlds</h1>
+            <p class="hero-description">
+                Experience the original massively multiplayer games. Rich narratives,
+                complex combat, and communities that have thrived for over two decades.
+            </p>
+            <div class="hero-buttons">
+                <a href="#games" class="btn btn-primary">Explore Our Games</a>
+                <a href="#about" class="btn btn-secondary">What are MUDs?</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Games Section -->
+    <section class="games" id="games">
+        <div class="section-header">
+            <p class="section-label">Our Worlds</p>
+            <h2 class="section-title">Choose Your Adventure</h2>
+            <p class="section-description">
+                Each realm offers a unique experience—from high fantasy to cosmic horror.
+                Which world will you call home?
+            </p>
+        </div>
+
+        <div class="games-grid">
+            <article class="game-card">
+                <div class="game-image">
+                    <img src="https://www.ironrealms.com/wp-content/uploads/2019/06/achaea.png" alt="Achaea">
+                </div>
+                <div class="game-content">
+                    <span class="game-badge">Flagship</span>
+                    <h3 class="game-title">Achaea</h3>
+                    <p class="game-subtitle">Dreams of Divine Lands</p>
+                    <p class="game-description">
+                        Twenty years of rich lore await. Sail the seas, transform into a dragon,
+                        rule player-governed cities, and forge your legend in a world shaped by
+                        player actions.
+                    </p>
+                    <a href="#" class="game-link">Enter Achaea &rarr;</a>
+                </div>
+            </article>
+
+            <article class="game-card">
+                <div class="game-image">
+                    <img src="https://www.ironrealms.com/wp-content/uploads/2019/06/aetolia.png" alt="Aetolia">
+                </div>
+                <div class="game-content">
+                    <span class="game-badge">Dark Fantasy</span>
+                    <h3 class="game-title">Aetolia</h3>
+                    <p class="game-subtitle">The Midnight Age</p>
+                    <p class="game-description">
+                        Embrace the darkness. Become a vampire lord, master shadow sorcery,
+                        or hunt the undead as a warrior of light in this gothic world of
+                        eternal conflict.
+                    </p>
+                    <a href="#" class="game-link">Enter Aetolia &rarr;</a>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-header">
+            <p class="section-label">Why MUDs?</p>
+            <h2 class="section-title">Deeper Than Any Other Game</h2>
+            <p class="section-description">
+                Like books versus movies—our games offer an immersion and depth
+                that graphics simply cannot match.
+            </p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature">
+                <div class="feature-icon">&#9876;</div>
+                <h3 class="feature-title">Complex Combat</h3>
+                <p class="feature-description">
+                    Thousands of abilities, afflictions, and strategies. PvP that rewards
+                    intelligence and preparation over reflexes.
+                </p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">&#127984;</div>
+                <h3 class="feature-title">Player Governance</h3>
+                <p class="feature-description">
+                    Lead cities, command armies, shape politics. Real power in
+                    player-run organizations with actual consequences.
+                </p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">&#10024;</div>
+                <h3 class="feature-title">Living Gods</h3>
+                <p class="feature-description">
+                    Divine characters played by real people. Gods who remember you,
+                    respond to prayers, and drive world-changing events.
+                </p>
+            </div>
+
+            <div class="feature">
+                <div class="feature-icon">&#128214;</div>
+                <h3 class="feature-title">Emergent Stories</h3>
+                <p class="feature-description">
+                    Your actions matter. World events respond to player choices.
+                    History written by the community.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials" id="community">
+        <div class="section-header">
+            <p class="section-label">What People Say</p>
+            <h2 class="section-title">Voices from the Community</h2>
+        </div>
+
+        <div class="testimonial-grid">
+            <div class="testimonial">
+                <p class="testimonial-quote">
+                    "MUDs are the most immersive games I've ever played. The depth of
+                    roleplay and community is unmatched by any graphical game."
+                </p>
+                <p class="testimonial-author">John Romero</p>
+                <p class="testimonial-role">Designer of Doom & Quake</p>
+            </div>
+
+            <div class="testimonial">
+                <p class="testimonial-quote">
+                    "Iron Realms created some of the most sophisticated virtual worlds
+                    ever designed. They pushed the boundaries of what MUDs could be."
+                </p>
+                <p class="testimonial-author">Richard Bartle</p>
+                <p class="testimonial-role">Co-creator of the original MUD</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta" id="about">
+        <h2 class="cta-title">Ready to Begin?</h2>
+        <p class="cta-description">
+            Join thousands of players in worlds that have been evolving for over
+            two decades. Your story starts now.
+        </p>
+        <a href="#" class="btn btn-primary">Play Free Today</a>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <p class="footer-logo">Iron Realms Entertainment</p>
+                <p class="footer-description">
+                    Pioneering online gaming since 1997. Creating worlds where
+                    imagination has no limits.
+                </p>
+            </div>
+
+            <div class="footer-column">
+                <h4>Games</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Achaea</a></li>
+                    <li><a href="#">Aetolia</a></li>
+                    <li><a href="#">Imperian</a></li>
+                    <li><a href="#">Lusternia</a></li>
+                    <li><a href="#">Starmourn</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Resources</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Nexus Client</a></li>
+                    <li><a href="#">New Player Guide</a></li>
+                    <li><a href="#">Discord</a></li>
+                    <li><a href="#">Forums</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h4>Company</h4>
+                <ul class="footer-links">
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 Iron Realms Entertainment. All rights reserved.</p>
+            <p>This is a redesign concept by Matt Mihály</p>
+        </div>
+    </footer>
+
+    <!-- Back to Portfolio -->
+    <a href="projects.html" class="back-link">&larr; Back to Portfolio</a>
+
+    <script>
+        // Nav scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('.nav');
+            if (window.scrollY > 100) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>

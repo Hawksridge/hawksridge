@@ -565,6 +565,7 @@
         let editingId = null;
         let nextId = 25;
         let draggedItem = null;
+        let localPreviewData = null; // Store local file preview
 
         // Load from localStorage if available
         const saved = localStorage.getItem('galleryPhotos');
@@ -674,6 +675,7 @@
 
         function openAddModal() {
             editingId = null;
+            localPreviewData = null;
             document.getElementById('modalTitle').textContent = 'Add Photo';
             document.getElementById('saveBtn').textContent = 'Add Photo';
             document.getElementById('photoFile').value = '';
@@ -691,6 +693,7 @@
             if (!photo) return;
 
             editingId = id;
+            localPreviewData = null;
             document.getElementById('modalTitle').textContent = 'Edit Photo';
             document.getElementById('saveBtn').textContent = 'Save Changes';
             document.getElementById('photoFile').value = '';
@@ -713,18 +716,19 @@
             const file = fileInput.files[0];
 
             if (file) {
-                // Set the URL to images/filename
-                const filename = file.name.replace(/\s+/g, '-').toLowerCase();
-                document.getElementById('photoUrl').value = 'images/' + filename;
-
                 // Show preview using FileReader
                 const reader = new FileReader();
                 reader.onload = function(e) {
+                    localPreviewData = e.target.result;
                     const preview = document.getElementById('imagePreview');
-                    preview.innerHTML = `<img src="${e.target.result}">`;
+                    preview.innerHTML = `<img src="${localPreviewData}">`;
                     preview.classList.remove('empty');
                 };
                 reader.readAsDataURL(file);
+
+                // Set the URL to images/filename (do this after setting up preview)
+                const filename = file.name.replace(/\s+/g, '-').toLowerCase();
+                document.getElementById('photoUrl').value = 'images/' + filename;
 
                 // Auto-fill title from filename if empty
                 const titleInput = document.getElementById('photoTitle');
@@ -739,10 +743,16 @@
             const url = document.getElementById('photoUrl').value;
             const preview = document.getElementById('imagePreview');
 
-            if (url) {
+            // If we have a local preview from file upload, use that
+            if (localPreviewData && url.startsWith('images/')) {
+                preview.innerHTML = `<img src="${localPreviewData}">`;
+                preview.classList.remove('empty');
+            } else if (url) {
+                localPreviewData = null; // Clear local preview when using URL
                 preview.innerHTML = `<img src="${url}" onerror="this.parentElement.innerHTML='Invalid image URL'; this.parentElement.classList.add('empty');">`;
                 preview.classList.remove('empty');
             } else {
+                localPreviewData = null;
                 preview.innerHTML = 'Image preview will appear here';
                 preview.classList.add('empty');
             }

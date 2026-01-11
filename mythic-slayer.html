@@ -4556,24 +4556,75 @@
             ctx.save();
             ctx.translate(-camera.x, -camera.y);
 
-            // Draw forest floor - grass pattern
-            const tileSize = 100;
-            const startX = Math.floor(camera.x / tileSize) * tileSize;
-            const startY = Math.floor(camera.y / tileSize) * tileSize;
-            for (let x = startX - tileSize; x < camera.x + W + tileSize; x += tileSize) {
-                for (let y = startY - tileSize; y < camera.y + H + tileSize; y += tileSize) {
-                    // Varied grass colors based on position
-                    const shade = ((x / tileSize + y / tileSize) % 3);
-                    ctx.fillStyle = shade === 0 ? '#1a4d1a' : shade === 1 ? '#1a3d1a' : '#2a5d2a';
-                    ctx.fillRect(x, y, tileSize, tileSize);
+            // Draw lush forest floor - organic pattern (no grid)
+            // Base gradient
+            const baseGradient = ctx.createRadialGradient(
+                camera.x + W/2, camera.y + H/2, 0,
+                camera.x + W/2, camera.y + H/2, W
+            );
+            baseGradient.addColorStop(0, '#2d5a2d');
+            baseGradient.addColorStop(0.5, '#1e4d1e');
+            baseGradient.addColorStop(1, '#1a3d1a');
+            ctx.fillStyle = baseGradient;
+            ctx.fillRect(camera.x - 50, camera.y - 50, W + 100, H + 100);
 
-                    // Add subtle texture
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.02)';
-                    for (let i = 0; i < 3; i++) {
-                        const gx = x + (((x * 7 + y * 13 + i * 37) % 80) + 10);
-                        const gy = y + (((x * 11 + y * 3 + i * 23) % 80) + 10);
+            // Organic grass patches using seeded noise pattern
+            const patchSize = 200;
+            const startX = Math.floor(camera.x / patchSize) * patchSize;
+            const startY = Math.floor(camera.y / patchSize) * patchSize;
+
+            for (let x = startX - patchSize; x < camera.x + W + patchSize; x += patchSize) {
+                for (let y = startY - patchSize; y < camera.y + H + patchSize; y += patchSize) {
+                    // Create organic grass clumps
+                    const seed = (x * 73 + y * 137) % 1000;
+                    const clumps = 4 + (seed % 4);
+
+                    for (let c = 0; c < clumps; c++) {
+                        const cx = x + ((seed * (c + 1) * 17) % patchSize);
+                        const cy = y + ((seed * (c + 1) * 23) % patchSize);
+                        const radius = 30 + ((seed * (c + 1)) % 50);
+
+                        // Soft grass patch
+                        const grassGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+                        const brightness = 0.15 + ((seed + c) % 10) / 50;
+                        grassGrad.addColorStop(0, `rgba(60, 120, 40, ${brightness})`);
+                        grassGrad.addColorStop(0.6, `rgba(40, 90, 30, ${brightness * 0.5})`);
+                        grassGrad.addColorStop(1, 'rgba(30, 70, 30, 0)');
+                        ctx.fillStyle = grassGrad;
                         ctx.beginPath();
-                        ctx.arc(gx, gy, 2, 0, Math.PI * 2);
+                        ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
+                    // Subtle darker patches for depth
+                    const darkPatches = 2 + (seed % 3);
+                    for (let d = 0; d < darkPatches; d++) {
+                        const dx = x + ((seed * (d + 7) * 31) % patchSize);
+                        const dy = y + ((seed * (d + 7) * 41) % patchSize);
+                        const dRadius = 20 + ((seed * d) % 30);
+
+                        const darkGrad = ctx.createRadialGradient(dx, dy, 0, dx, dy, dRadius);
+                        darkGrad.addColorStop(0, 'rgba(15, 35, 15, 0.3)');
+                        darkGrad.addColorStop(1, 'rgba(15, 35, 15, 0)');
+                        ctx.fillStyle = darkGrad;
+                        ctx.beginPath();
+                        ctx.arc(dx, dy, dRadius, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
+                    // Small highlight spots (dappled sunlight)
+                    const highlights = 3 + (seed % 4);
+                    for (let h = 0; h < highlights; h++) {
+                        const hx = x + ((seed * (h + 3) * 47) % patchSize);
+                        const hy = y + ((seed * (h + 3) * 53) % patchSize);
+                        const hRadius = 8 + ((seed * h) % 15);
+
+                        const lightGrad = ctx.createRadialGradient(hx, hy, 0, hx, hy, hRadius);
+                        lightGrad.addColorStop(0, 'rgba(120, 180, 80, 0.15)');
+                        lightGrad.addColorStop(1, 'rgba(100, 160, 60, 0)');
+                        ctx.fillStyle = lightGrad;
+                        ctx.beginPath();
+                        ctx.arc(hx, hy, hRadius, 0, Math.PI * 2);
                         ctx.fill();
                     }
                 }

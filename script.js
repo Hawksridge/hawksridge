@@ -3,7 +3,7 @@
 // ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    const toggleBtns = document.querySelectorAll('.toggle-btn');
+    const toggleOptions = document.querySelectorAll('.toggle-option');
     const galleryItems = document.querySelectorAll('.gallery-item');
     let currentFilter = 'color';
 
@@ -19,25 +19,25 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Update active button
-        toggleBtns.forEach(btn => {
-            if (btn.dataset.filter === filter) {
-                btn.classList.add('active');
+        // Update active option
+        toggleOptions.forEach(opt => {
+            if (opt.dataset.filter === filter) {
+                opt.classList.add('active');
             } else {
-                btn.classList.remove('active');
+                opt.classList.remove('active');
             }
         });
     }
 
     // Initialize filter on page load
-    if (toggleBtns.length > 0) {
+    if (toggleOptions.length > 0) {
         filterGallery('color');
     }
 
-    // Toggle button click handlers
-    toggleBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            filterGallery(btn.dataset.filter);
+    // Toggle option click handlers
+    toggleOptions.forEach(opt => {
+        opt.addEventListener('click', () => {
+            filterGallery(opt.dataset.filter);
         });
     });
 

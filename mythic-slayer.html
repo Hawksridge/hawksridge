@@ -4557,6 +4557,12 @@
             ctx.fillStyle = '#1a3d1a';
             ctx.fillRect(0, 0, W, H);
 
+            // DEBUG: Show game state info
+            ctx.fillStyle = '#ff0';
+            ctx.font = 'bold 16px monospace';
+            ctx.textAlign = 'left';
+            ctx.fillText(`State: ${gameState} | Player: (${Math.round(player.x || 0)}, ${Math.round(player.y || 0)}) | Camera: (${Math.round(camera.x)}, ${Math.round(camera.y)})`, 10, H - 20);
+
             // Apply camera transform for world rendering
             ctx.save();
             ctx.translate(-camera.x, -camera.y);

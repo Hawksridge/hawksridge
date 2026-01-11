@@ -4857,7 +4857,7 @@
                 ctx.textAlign = 'center';
                 const abilityText = cooldownProgress >= 1 ? `[SPACE] ${classDef.abilityName}` : `${classDef.abilityName} (${(cooldownRemaining / 1000).toFixed(1)}s)`;
                 ctx.fillText(abilityText, W - abW/2 - 20, abY + 12);
-            }
+                }
 
                 // Combo counter (top left)
                 if (player.comboCount > 0 && player.comboBonus > 0) {

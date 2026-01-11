@@ -31,6 +31,10 @@
             font-size: 18px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
             pointer-events: none;
+            display: none;
+        }
+        #ui.visible {
+            display: block;
         }
         #upgradeMenu {
             position: absolute;
@@ -1845,6 +1849,7 @@
 
         function startWave() {
             document.getElementById('upgradeMenu').style.display = 'none';
+            document.getElementById('ui').classList.add('visible');
             gameState = 'playing';
             playSound('waveStart');
 
@@ -4789,28 +4794,30 @@
 
             // ===== UI ELEMENTS (Screen Space) =====
 
-            // Health bar
-            const hbW = 200, hbH = 20;
-            ctx.fillStyle = '#333';
-            ctx.fillRect(W - hbW - 20, 20, hbW, hbH);
+            // Only show in-game UI when playing
+            if (gameState === 'playing') {
+                // Health bar
+                const hbW = 200, hbH = 20;
+                ctx.fillStyle = '#333';
+                ctx.fillRect(W - hbW - 20, 20, hbW, hbH);
 
-            // Rage indicator for barbarian
-            let healthColor = player.health > player.maxHealth * 0.3 ? '#4a4' : '#a44';
-            if (player.class === 'barbarian' && player.rageDamage && player.health < player.maxHealth * 0.5) {
-                healthColor = '#ff4400';
-            }
-            ctx.fillStyle = healthColor;
-            ctx.fillRect(W - hbW - 20, 20, hbW * (player.health / player.maxHealth), hbH);
-            ctx.strokeStyle = classDefinitions[player.class]?.color || '#c9a227';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(W - hbW - 20, 20, hbW, hbH);
-            ctx.fillStyle = '#fff';
-            ctx.font = '14px Georgia';
-            ctx.textAlign = 'center';
-            ctx.fillText(`${Math.ceil(player.health)} / ${player.maxHealth}`, W - hbW/2 - 20, 35);
+                // Rage indicator for barbarian
+                let healthColor = player.health > player.maxHealth * 0.3 ? '#4a4' : '#a44';
+                if (player.class === 'barbarian' && player.rageDamage && player.health < player.maxHealth * 0.5) {
+                    healthColor = '#ff4400';
+                }
+                ctx.fillStyle = healthColor;
+                ctx.fillRect(W - hbW - 20, 20, hbW * (player.health / player.maxHealth), hbH);
+                ctx.strokeStyle = classDefinitions[player.class]?.color || '#c9a227';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(W - hbW - 20, 20, hbW, hbH);
+                ctx.fillStyle = '#fff';
+                ctx.font = '14px Georgia';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${Math.ceil(player.health)} / ${player.maxHealth}`, W - hbW/2 - 20, 35);
 
-            // Ability cooldown bar
-            if (player.class && classDefinitions[player.class]) {
+                // Ability cooldown bar
+                if (player.class && classDefinitions[player.class]) {
                 const classDef = classDefinitions[player.class];
                 const now = Date.now();
                 const cooldownTotal = classDef.abilityCooldown * player.abilityCooldownMult;
@@ -4852,25 +4859,24 @@
                 ctx.fillText(abilityText, W - abW/2 - 20, abY + 12);
             }
 
-            // Combo counter (top left)
-            if (player.comboCount > 0 && player.comboBonus > 0) {
-                const comboAlpha = Math.min(1, (2000 - (Date.now() - player.lastHitTime)) / 500);
-                if (comboAlpha > 0) {
-                    ctx.globalAlpha = comboAlpha;
-                    ctx.font = 'bold 24px Georgia';
-                    ctx.textAlign = 'left';
-                    ctx.fillStyle = player.comboCount >= player.comboMax ? '#ff4400' : '#ffd700';
-                    ctx.fillText(`${player.comboCount}x COMBO`, 20, 80);
-                    const bonusPercent = Math.round(player.comboBonus * player.comboCount * 100);
-                    ctx.font = '14px Georgia';
-                    ctx.fillStyle = '#aaa';
-                    ctx.fillText(`+${bonusPercent}% damage`, 20, 100);
-                    ctx.globalAlpha = 1;
+                // Combo counter (top left)
+                if (player.comboCount > 0 && player.comboBonus > 0) {
+                    const comboAlpha = Math.min(1, (2000 - (Date.now() - player.lastHitTime)) / 500);
+                    if (comboAlpha > 0) {
+                        ctx.globalAlpha = comboAlpha;
+                        ctx.font = 'bold 24px Georgia';
+                        ctx.textAlign = 'left';
+                        ctx.fillStyle = player.comboCount >= player.comboMax ? '#ff4400' : '#ffd700';
+                        ctx.fillText(`${player.comboCount}x COMBO`, 20, 80);
+                        const bonusPercent = Math.round(player.comboBonus * player.comboCount * 100);
+                        ctx.font = '14px Georgia';
+                        ctx.fillStyle = '#aaa';
+                        ctx.fillText(`+${bonusPercent}% damage`, 20, 100);
+                        ctx.globalAlpha = 1;
+                    }
                 }
-            }
 
-            // Wave timer display (center top)
-            if (gameState === 'playing') {
+                // Wave timer display (center top)
                 const timeRemaining = Math.max(0, waveTimeLimit - waveTimer);
                 const seconds = Math.ceil(timeRemaining / 1000);
                 const progress = waveTimer / waveTimeLimit;
@@ -4905,10 +4911,9 @@
                 ctx.font = '12px Georgia';
                 ctx.fillStyle = '#aaa';
                 ctx.fillText('Survive to advance!', W / 2, tbY + 38);
-            }
 
-            // Active buffs display (below wave timer)
-            if (activeBuffs.length > 0) {
+                // Active buffs display (below wave timer)
+                if (activeBuffs.length > 0) {
                 const buffY = 70;
                 const buffSize = 40;
                 const startX = (W - activeBuffs.length * (buffSize + 5)) / 2;
@@ -4945,8 +4950,9 @@
                     // Time remaining
                     ctx.font = '10px Georgia';
                     ctx.fillText(timeLeft.toFixed(1), x + buffSize / 2, buffY + buffSize + 12);
+                    }
                 }
-            }
+            } // End gameState === 'playing' UI block
 
             // Minimap (bottom right)
             const mmSize = 150;
@@ -5045,6 +5051,7 @@
                 if (waveTimer >= waveTimeLimit) {
                     wave++;
                     gameState = 'upgrading';
+                    document.getElementById('ui').classList.remove('visible');
                     playSound('waveComplete');
                     showUpgradeMenu();
                 }
@@ -5052,6 +5059,7 @@
                 // Check player death
                 if (player.health <= 0) {
                     gameState = 'gameover';
+                    document.getElementById('ui').classList.remove('visible');
                     document.getElementById('finalScore').textContent = `Final Score: ${score}`;
                     document.getElementById('finalWave').textContent = `Reached Wave: ${wave}`;
                     document.getElementById('gameOver').style.display = 'block';

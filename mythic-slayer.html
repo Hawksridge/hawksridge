@@ -4557,12 +4557,6 @@
             ctx.fillStyle = '#1a3d1a';
             ctx.fillRect(0, 0, W, H);
 
-            // DEBUG: Show game state info
-            ctx.fillStyle = '#ff0';
-            ctx.font = 'bold 16px monospace';
-            ctx.textAlign = 'left';
-            ctx.fillText(`State: ${gameState} | Player: (${Math.round(player.x || 0)}, ${Math.round(player.y || 0)}) | Camera: (${Math.round(camera.x)}, ${Math.round(camera.y)})`, 10, H - 20);
-
             // Apply camera transform for world rendering
             ctx.save();
             ctx.translate(-camera.x, -camera.y);
@@ -4587,7 +4581,7 @@
             for (let x = startX - patchSize; x < camera.x + W + patchSize; x += patchSize) {
                 for (let y = startY - patchSize; y < camera.y + H + patchSize; y += patchSize) {
                     // Create organic grass clumps
-                    const seed = (x * 73 + y * 137) % 1000;
+                    const seed = Math.abs((x * 73 + y * 137) % 1000);
                     const clumps = 4 + (seed % 4);
 
                     for (let c = 0; c < clumps; c++) {
@@ -4624,11 +4618,11 @@
                     }
 
                     // Small highlight spots (dappled sunlight)
-                    const highlights = 3 + (seed % 4);
+                    const highlights = 3 + Math.abs(seed % 4);
                     for (let h = 0; h < highlights; h++) {
-                        const hx = x + ((seed * (h + 3) * 47) % patchSize);
-                        const hy = y + ((seed * (h + 3) * 53) % patchSize);
-                        const hRadius = 8 + ((seed * h) % 15);
+                        const hx = x + Math.abs((seed * (h + 3) * 47) % patchSize);
+                        const hy = y + Math.abs((seed * (h + 3) * 53) % patchSize);
+                        const hRadius = 8 + Math.abs((seed * h) % 15);
 
                         const lightGrad = ctx.createRadialGradient(hx, hy, 0, hx, hy, hRadius);
                         lightGrad.addColorStop(0, 'rgba(120, 180, 80, 0.15)');

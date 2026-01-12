@@ -735,7 +735,7 @@
             const file = fileInput.files[0];
 
             if (file) {
-                const filename = file.name.replace(/\s+/g, '-').toLowerCase();
+                const filename = file.name.replace(/\s+/g, '-');
 
                 // Create object URL for preview
                 localPreviewData = URL.createObjectURL(file);

@@ -531,47 +531,66 @@
     </div>
 
     <script>
-        // Initial photo data - extracted from current index.html
-        let photos = [
-            // Color photos
-            { id: 1, url: 'https://picsum.photos/seed/col1/800/533', title: 'Dawn Over the Peaks', location: 'Swiss Alps', type: 'color', dimension: 'landscape' },
-            { id: 2, url: 'https://picsum.photos/seed/col2/533/800', title: 'Golden Hour', location: 'Lisbon, Portugal', type: 'color', dimension: 'portrait' },
-            { id: 3, url: 'https://picsum.photos/seed/col3/800/533', title: 'Morning Commute', location: 'Tokyo, Japan', type: 'color', dimension: 'landscape' },
-            { id: 4, url: 'https://picsum.photos/seed/col4/600/600', title: 'After the Rain', location: 'Olympic National Park', type: 'color', dimension: 'square' },
-            { id: 5, url: 'https://picsum.photos/seed/col5/800/450', title: 'Pacific Dreams', location: 'Big Sur, California', type: 'color', dimension: 'landscape' },
-            { id: 6, url: 'https://picsum.photos/seed/col6/533/800', title: 'Gothic Revival', location: 'Barcelona, Spain', type: 'color', dimension: 'portrait' },
-            { id: 7, url: 'https://picsum.photos/seed/col7/800/533', title: 'Neon Nights', location: 'Hong Kong', type: 'color', dimension: 'landscape' },
-            { id: 8, url: 'https://picsum.photos/seed/col8/600/600', title: 'Silent Observer', location: 'Yellowstone', type: 'color', dimension: 'square' },
-            { id: 9, url: 'https://picsum.photos/seed/col9/800/533', title: 'Turquoise Waters', location: 'Maldives', type: 'color', dimension: 'landscape' },
-            { id: 10, url: 'https://picsum.photos/seed/col10/533/800', title: 'Spice Merchant', location: 'Marrakech, Morocco', type: 'color', dimension: 'portrait' },
-            { id: 11, url: 'https://picsum.photos/seed/col11/600/600', title: 'Sakura Season', location: 'Kyoto, Japan', type: 'color', dimension: 'square' },
-            { id: 12, url: 'https://picsum.photos/seed/col12/800/533', title: 'Aurora', location: 'Tromsø, Norway', type: 'color', dimension: 'landscape' },
-            // B&W photos
-            { id: 13, url: 'https://picsum.photos/seed/bw1/800/533?grayscale', title: 'Endless Sands', location: 'Sahara Desert', type: 'bw', dimension: 'landscape' },
-            { id: 14, url: 'https://picsum.photos/seed/bw2/533/800?grayscale', title: 'The Craftsman', location: 'Kyoto, Japan', type: 'bw', dimension: 'portrait' },
-            { id: 15, url: 'https://picsum.photos/seed/bw3/800/533?grayscale', title: 'Lines & Light', location: 'Dubai, UAE', type: 'bw', dimension: 'landscape' },
-            { id: 16, url: 'https://picsum.photos/seed/bw4/600/600?grayscale', title: 'Urban Geometry', location: 'New York City', type: 'bw', dimension: 'square' },
-            { id: 17, url: 'https://picsum.photos/seed/bw5/800/500?grayscale', title: 'Misty Morning', location: 'Black Forest, Germany', type: 'bw', dimension: 'landscape' },
-            { id: 18, url: 'https://picsum.photos/seed/bw6/533/800?grayscale', title: 'Cascading Light', location: 'Iceland', type: 'bw', dimension: 'portrait' },
-            { id: 19, url: 'https://picsum.photos/seed/bw7/800/533?grayscale', title: 'Shadows of the Souk', location: 'Marrakech, Morocco', type: 'bw', dimension: 'landscape' },
-            { id: 20, url: 'https://picsum.photos/seed/bw8/600/600?grayscale', title: 'Contemplation', location: 'Venice, Italy', type: 'bw', dimension: 'square' },
-            { id: 21, url: 'https://picsum.photos/seed/bw9/800/533?grayscale', title: 'Into the Clouds', location: 'Dolomites, Italy', type: 'bw', dimension: 'landscape' },
-            { id: 22, url: 'https://picsum.photos/seed/bw10/533/800?grayscale', title: 'Wisdom', location: 'Varanasi, India', type: 'bw', dimension: 'portrait' },
-            { id: 23, url: 'https://picsum.photos/seed/bw11/600/600?grayscale', title: 'Old Town', location: 'Prague, Czech Republic', type: 'bw', dimension: 'square' },
-            { id: 24, url: 'https://picsum.photos/seed/bw12/800/533?grayscale', title: 'Solitude', location: 'Scottish Highlands', type: 'bw', dimension: 'landscape' },
-        ];
+        // Photos array - will be loaded from index.html
+        let photos = [];
 
-        let currentFilter = 'color';
+        let currentFilter = 'bw';
         let editingId = null;
-        let nextId = 25;
+        let nextId = 1;
         let draggedItem = null;
-        let localPreviewData = null; // Store local file preview
+        let localPreviewData = null;
 
-        // Load from localStorage if available
-        const saved = localStorage.getItem('galleryPhotos');
-        if (saved) {
-            photos = JSON.parse(saved);
-            nextId = Math.max(...photos.map(p => p.id)) + 1;
+        // Load gallery from index.html on startup
+        async function loadGalleryFromIndex() {
+            try {
+                const response = await fetch('index.html');
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                const galleryItems = doc.querySelectorAll('.gallery-item');
+                photos = [];
+
+                galleryItems.forEach((item, index) => {
+                    const img = item.querySelector('img');
+                    const titleEl = item.querySelector('.photo-title');
+                    const locationEl = item.querySelector('.photo-location');
+
+                    if (img && titleEl && locationEl) {
+                        // Get dimension from class
+                        let dimension = 'landscape';
+                        if (item.classList.contains('portrait')) dimension = 'portrait';
+                        else if (item.classList.contains('square')) dimension = 'square';
+
+                        photos.push({
+                            id: index + 1,
+                            url: img.getAttribute('src'),
+                            title: titleEl.textContent,
+                            location: locationEl.textContent,
+                            type: item.getAttribute('data-type') || 'color',
+                            dimension: dimension
+                        });
+                    }
+                });
+
+                nextId = photos.length + 1;
+
+                // Set initial tab based on what photos exist
+                const hasColor = photos.some(p => p.type === 'color');
+                const hasBW = photos.some(p => p.type === 'bw');
+                currentFilter = hasColor ? 'color' : (hasBW ? 'bw' : 'color');
+
+                // Update tab UI
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.classList.toggle('active', tab.dataset.filter === currentFilter);
+                });
+
+                renderGallery();
+                console.log(`Loaded ${photos.length} photos from index.html`);
+            } catch (error) {
+                console.error('Error loading gallery from index.html:', error);
+                renderGallery(); // Render empty gallery
+            }
         }
 
         function saveToStorage() {
@@ -873,8 +892,8 @@
             });
         });
 
-        // Initial render
-        renderGallery();
+        // Initial load from index.html
+        loadGalleryFromIndex();
     </script>
 </body>
 </html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Videos | Matt Mihály</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-content">
+            <a href="index.html" class="logo">Matt Mihály</a>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">Gallery</a>
+                <a href="videos.html" class="nav-link active">Videos</a>
+                <a href="projects.html" class="nav-link">Projects</a>
+                <a href="about.html" class="nav-link">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <h1>Videos</h1>
+        </section>
+
+        <section class="videos-section">
+            <div class="videos-grid" id="videos-grid">
+                <!-- Videos will be loaded dynamically -->
+            </div>
+            <p class="no-videos" id="no-videos" style="display: none; text-align: center; padding: 4rem;">No videos yet.</p>
+        </section>
+    </main>
+
+    <!-- Video Lightbox -->
+    <div class="video-lightbox" id="video-lightbox">
+        <button class="lightbox-close" aria-label="Close">&times;</button>
+        <div class="video-lightbox-content">
+            <div class="video-container" id="video-container">
+                <!-- YouTube iframe will be inserted here -->
+            </div>
+            <div class="video-caption">
+                <h3 id="video-title"></h3>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 Matt Mihály. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Load and display videos
+        document.addEventListener('DOMContentLoaded', () => {
+            const videosGrid = document.getElementById('videos-grid');
+            const noVideos = document.getElementById('no-videos');
+            const lightbox = document.getElementById('video-lightbox');
+            const videoContainer = document.getElementById('video-container');
+            const videoTitle = document.getElementById('video-title');
+            const closeBtn = lightbox.querySelector('.lightbox-close');
+
+            // Load videos from localStorage
+            function loadVideos() {
+                const videos = JSON.parse(localStorage.getItem('siteVideos') || '[]');
+
+                if (videos.length === 0) {
+                    videosGrid.style.display = 'none';
+                    noVideos.style.display = 'block';
+                    return;
+                }
+
+                videosGrid.style.display = 'grid';
+                noVideos.style.display = 'none';
+                videosGrid.innerHTML = '';
+
+                videos.forEach((video, index) => {
+                    const videoItem = document.createElement('div');
+                    videoItem.className = 'video-item';
+                    videoItem.innerHTML = `
+                        <div class="video-thumbnail">
+                            <img src="https://img.youtube.com/vi/${video.videoId}/maxresdefault.jpg"
+                                 alt="${video.title}"
+                                 onerror="this.src='https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg'">
+                            <div class="play-button">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M8 5v14l11-7z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="video-info">
+                            <h3 class="video-item-title">${video.title}</h3>
+                        </div>
+                    `;
+                    videoItem.addEventListener('click', () => openVideo(video));
+                    videosGrid.appendChild(videoItem);
+                });
+            }
+
+            // Open video in lightbox
+            function openVideo(video) {
+                videoContainer.innerHTML = `
+                    <iframe
+                        src="https://www.youtube.com/embed/${video.videoId}?autoplay=1&rel=0"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                `;
+                videoTitle.textContent = video.title;
+                lightbox.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Close lightbox
+            function closeLightbox() {
+                lightbox.classList.remove('active');
+                document.body.style.overflow = '';
+                videoContainer.innerHTML = ''; // Stop video playback
+            }
+
+            closeBtn.addEventListener('click', closeLightbox);
+
+            lightbox.addEventListener('click', (e) => {
+                if (e.target === lightbox) {
+                    closeLightbox();
+                }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && lightbox.classList.contains('active')) {
+                    closeLightbox();
+                }
+            });
+
+            // Initial load
+            loadVideos();
+        });
+    </script>
+</body>
+</html>

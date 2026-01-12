@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Manager | Matt Mihály</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        .admin-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: calc(var(--spacing-xl) + 60px) var(--spacing-md) var(--spacing-xl);
+        }
+
+        .admin-header {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .admin-header h1 {
+            font-family: var(--font-display);
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .admin-header p {
+            color: var(--color-text-light);
+        }
+
+        .add-video-form {
+            background: white;
+            border: 1px solid var(--color-border);
+            padding: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .form-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .form-input {
+            font-family: var(--font-body);
+            font-size: 1rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--color-border);
+            background: var(--color-bg);
+            transition: border-color var(--transition-fast);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--color-text-light);
+        }
+
+        .form-input.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .btn {
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        .btn-primary {
+            background: var(--color-text);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-text-light);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .video-preview {
+            display: none;
+            margin-top: var(--spacing-sm);
+            padding: var(--spacing-sm);
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+        }
+
+        .video-preview.active {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .video-preview img {
+            width: 120px;
+            height: 68px;
+            object-fit: cover;
+        }
+
+        .video-preview-info {
+            flex: 1;
+        }
+
+        .video-preview-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .video-preview-id {
+            font-size: 0.8rem;
+            color: var(--color-text-lighter);
+        }
+
+        .videos-list {
+            display: grid;
+            gap: var(--spacing-sm);
+        }
+
+        .video-list-item {
+            display: grid;
+            grid-template-columns: 160px 1fr auto;
+            gap: var(--spacing-md);
+            align-items: center;
+            background: white;
+            border: 1px solid var(--color-border);
+            padding: var(--spacing-sm);
+        }
+
+        .video-list-thumbnail {
+            width: 160px;
+            height: 90px;
+            object-fit: cover;
+        }
+
+        .video-list-info h3 {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .video-list-info p {
+            font-size: 0.85rem;
+            color: var(--color-text-lighter);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: var(--spacing-xl);
+            color: var(--color-text-lighter);
+        }
+
+        .message {
+            padding: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+            border-radius: 4px;
+        }
+
+        .message-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 600px) {
+            .video-list-item {
+                grid-template-columns: 1fr;
+            }
+
+            .video-list-thumbnail {
+                width: 100%;
+                height: auto;
+                aspect-ratio: 16/9;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-content">
+            <a href="index.html" class="logo">Matt Mihály</a>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link">Gallery</a>
+                <a href="videos.html" class="nav-link">Videos</a>
+                <a href="projects.html" class="nav-link">Projects</a>
+                <a href="about.html" class="nav-link">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="admin-container">
+        <div class="admin-header">
+            <h1>Video Manager</h1>
+            <p>Add and manage videos from YouTube</p>
+        </div>
+
+        <div id="message-container"></div>
+
+        <div class="add-video-form">
+            <h3 style="font-family: var(--font-display); margin-bottom: var(--spacing-sm);">Add New Video</h3>
+            <div class="form-row">
+                <input type="text" id="youtube-url" class="form-input" placeholder="Paste YouTube URL (e.g., https://www.youtube.com/watch?v=...)">
+                <button type="button" id="preview-btn" class="btn btn-primary">Preview</button>
+            </div>
+            <div class="video-preview" id="video-preview">
+                <img id="preview-thumbnail" src="" alt="Video thumbnail">
+                <div class="video-preview-info">
+                    <div class="video-preview-title" id="preview-title">Video Title</div>
+                    <div class="video-preview-id" id="preview-id">Video ID</div>
+                </div>
+            </div>
+            <div class="form-row" style="margin-top: var(--spacing-sm);">
+                <input type="text" id="video-title" class="form-input full-width" placeholder="Video title (optional - will use YouTube title if available)">
+            </div>
+            <div class="form-row">
+                <div></div>
+                <button type="button" id="add-btn" class="btn btn-primary" disabled>Add Video</button>
+            </div>
+        </div>
+
+        <h3 style="font-family: var(--font-display); margin-bottom: var(--spacing-md);">Your Videos</h3>
+        <div class="videos-list" id="videos-list">
+            <!-- Videos will be loaded here -->
+        </div>
+        <div class="empty-state" id="empty-state" style="display: none;">
+            No videos added yet. Paste a YouTube URL above to get started.
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 Matt Mihály. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const youtubeUrlInput = document.getElementById('youtube-url');
+            const previewBtn = document.getElementById('preview-btn');
+            const videoPreview = document.getElementById('video-preview');
+            const previewThumbnail = document.getElementById('preview-thumbnail');
+            const previewTitle = document.getElementById('preview-title');
+            const previewId = document.getElementById('preview-id');
+            const videoTitleInput = document.getElementById('video-title');
+            const addBtn = document.getElementById('add-btn');
+            const videosList = document.getElementById('videos-list');
+            const emptyState = document.getElementById('empty-state');
+            const messageContainer = document.getElementById('message-container');
+
+            let currentVideoId = null;
+
+            // Extract YouTube video ID from various URL formats
+            function extractVideoId(url) {
+                const patterns = [
+                    /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/shorts\/)([^&\n?#]+)/,
+                    /^([a-zA-Z0-9_-]{11})$/
+                ];
+
+                for (const pattern of patterns) {
+                    const match = url.match(pattern);
+                    if (match) {
+                        return match[1];
+                    }
+                }
+                return null;
+            }
+
+            // Show message
+            function showMessage(text, type) {
+                messageContainer.innerHTML = `<div class="message message-${type}">${text}</div>`;
+                setTimeout(() => {
+                    messageContainer.innerHTML = '';
+                }, 3000);
+            }
+
+            // Load videos from localStorage
+            function loadVideos() {
+                const videos = JSON.parse(localStorage.getItem('siteVideos') || '[]');
+
+                if (videos.length === 0) {
+                    videosList.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    return;
+                }
+
+                videosList.style.display = 'grid';
+                emptyState.style.display = 'none';
+                videosList.innerHTML = '';
+
+                videos.forEach((video, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'video-list-item';
+                    item.innerHTML = `
+                        <img class="video-list-thumbnail"
+                             src="https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg"
+                             alt="${video.title}">
+                        <div class="video-list-info">
+                            <h3>${video.title}</h3>
+                            <p>youtube.com/watch?v=${video.videoId}</p>
+                        </div>
+                        <button class="btn btn-danger" data-index="${index}">Remove</button>
+                    `;
+                    videosList.appendChild(item);
+                });
+
+                // Add remove event listeners
+                videosList.querySelectorAll('.btn-danger').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.dataset.index);
+                        removeVideo(index);
+                    });
+                });
+            }
+
+            // Save videos to localStorage
+            function saveVideos(videos) {
+                localStorage.setItem('siteVideos', JSON.stringify(videos));
+            }
+
+            // Add video
+            function addVideo(videoId, title) {
+                const videos = JSON.parse(localStorage.getItem('siteVideos') || '[]');
+
+                // Check for duplicates
+                if (videos.some(v => v.videoId === videoId)) {
+                    showMessage('This video is already in your list.', 'error');
+                    return;
+                }
+
+                videos.push({
+                    videoId: videoId,
+                    title: title || `Video ${videoId}`,
+                    addedAt: new Date().toISOString()
+                });
+
+                saveVideos(videos);
+                loadVideos();
+                resetForm();
+                showMessage('Video added successfully!', 'success');
+            }
+
+            // Remove video
+            function removeVideo(index) {
+                const videos = JSON.parse(localStorage.getItem('siteVideos') || '[]');
+                videos.splice(index, 1);
+                saveVideos(videos);
+                loadVideos();
+                showMessage('Video removed.', 'success');
+            }
+
+            // Reset form
+            function resetForm() {
+                youtubeUrlInput.value = '';
+                videoTitleInput.value = '';
+                videoPreview.classList.remove('active');
+                addBtn.disabled = true;
+                currentVideoId = null;
+            }
+
+            // Preview button click
+            previewBtn.addEventListener('click', () => {
+                const url = youtubeUrlInput.value.trim();
+                const videoId = extractVideoId(url);
+
+                if (!videoId) {
+                    showMessage('Please enter a valid YouTube URL.', 'error');
+                    return;
+                }
+
+                currentVideoId = videoId;
+                previewThumbnail.src = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+                previewTitle.textContent = videoTitleInput.value || 'Enter a title below';
+                previewId.textContent = `ID: ${videoId}`;
+                videoPreview.classList.add('active');
+                addBtn.disabled = false;
+            });
+
+            // Update preview title when input changes
+            videoTitleInput.addEventListener('input', () => {
+                if (videoPreview.classList.contains('active')) {
+                    previewTitle.textContent = videoTitleInput.value || 'Enter a title below';
+                }
+            });
+
+            // Add button click
+            addBtn.addEventListener('click', () => {
+                if (!currentVideoId) return;
+
+                const title = videoTitleInput.value.trim() || `Video ${currentVideoId}`;
+                addVideo(currentVideoId, title);
+            });
+
+            // Allow Enter key to trigger preview
+            youtubeUrlInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    previewBtn.click();
+                }
+            });
+
+            // Initial load
+            loadVideos();
+        });
+    </script>
+</body>
+</html>

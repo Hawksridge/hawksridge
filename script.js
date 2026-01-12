@@ -69,8 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const title = item.querySelector('.photo-title');
         const location = item.querySelector('.photo-location');
 
-        // Get higher resolution version of the image
-        let imgSrc = img.src;
+        // Use full-res image if available (data-full attribute), otherwise use src
+        let imgSrc = img.dataset.full || img.src;
         // Handle picsum photos resolution upgrade
         if (imgSrc.includes('picsum.photos')) {
             imgSrc = imgSrc.replace(/\/(\d+)\/(\d+)/, '/1200/800');

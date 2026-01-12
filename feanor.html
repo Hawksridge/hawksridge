@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spirit of Fire - The Last Stand of Fëanor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            overflow: hidden;
+            font-family: 'Georgia', serif;
+        }
+
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(180deg, #1a0a0a 0%, #2d1810 50%, #0d0d0d 100%);
+            overflow: hidden;
+        }
+
+        /* Parallax background layers */
+        .bg-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .mountains {
+            bottom: 0;
+            background:
+                linear-gradient(135deg, transparent 40%, #1a1015 40%, #1a1015 42%, transparent 42%),
+                linear-gradient(225deg, transparent 40%, #150d12 40%, #150d12 42%, transparent 42%),
+                linear-gradient(145deg, transparent 50%, #12090e 50%, #12090e 52%, transparent 52%);
+            background-size: 300px 200px, 250px 180px, 400px 220px;
+            background-position: 0 100%, 150px 100%, 75px 100%;
+            background-repeat: repeat-x;
+            opacity: 0.8;
+        }
+
+        .embers {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .ember {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, #ff6b35 0%, #ff4500 50%, transparent 70%);
+            border-radius: 50%;
+            animation: float-up linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(100vh) scale(1); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-20px) scale(0.3); opacity: 0; }
+        }
+
+        /* Game canvas area */
+        #game-world {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Entity base styles */
+        .entity {
+            position: absolute;
+            transition: transform 0.05s linear;
+        }
+
+        /* Fëanor - The Player */
+        #player {
+            width: 60px;
+            height: 80px;
+            z-index: 100;
+        }
+
+        .player-body {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Fëanor's cloak */
+        .cloak {
+            position: absolute;
+            width: 50px;
+            height: 45px;
+            bottom: 10px;
+            left: 5px;
+            background: linear-gradient(180deg, #8b0000 0%, #4a0000 100%);
+            clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 0% 100%);
+            animation: cloak-flow 0.5s ease-in-out infinite alternate;
+            transform-origin: top center;
+        }
+
+        @keyframes cloak-flow {
+            0% { transform: skewX(-3deg); }
+            100% { transform: skewX(3deg); }
+        }
+
+        /* Fëanor's body */
+        .torso {
+            position: absolute;
+            width: 30px;
+            height: 35px;
+            top: 20px;
+            left: 15px;
+            background: linear-gradient(180deg, #c0c0c0 0%, #808080 100%);
+            border-radius: 5px 5px 0 0;
+            border: 2px solid #d4af37;
+        }
+
+        /* Fëanor's head */
+        .head {
+            position: absolute;
+            width: 24px;
+            height: 28px;
+            top: 0;
+            left: 18px;
+            background: linear-gradient(180deg, #f5deb3 0%, #deb887 100%);
+            border-radius: 50% 50% 45% 45%;
+        }
+
+        /* Hair - dark and flowing */
+        .hair {
+            position: absolute;
+            width: 30px;
+            height: 20px;
+            top: -2px;
+            left: 15px;
+            background: #1a1a1a;
+            border-radius: 50% 50% 0 0;
+            z-index: -1;
+        }
+
+        .hair::after {
+            content: '';
+            position: absolute;
+            width: 35px;
+            height: 25px;
+            top: 8px;
+            left: -2px;
+            background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+            clip-path: polygon(0% 0%, 100% 0%, 90% 100%, 10% 100%);
+            animation: hair-flow 0.4s ease-in-out infinite alternate;
+        }
+
+        @keyframes hair-flow {
+            0% { transform: skewX(-2deg); }
+            100% { transform: skewX(2deg); }
+        }
+
+        /* Crown - Fëanor's circlet */
+        .crown {
+            position: absolute;
+            width: 28px;
+            height: 8px;
+            top: 2px;
+            left: 16px;
+            border: 2px solid #d4af37;
+            border-bottom: none;
+            border-radius: 50% 50% 0 0;
+        }
+
+        /* Silmaril glow on crown */
+        .crown::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            top: -4px;
+            left: 8px;
+            background: radial-gradient(circle, #ffffff 0%, #87ceeb 40%, #4169e1 70%, transparent 100%);
+            border-radius: 50%;
+            animation: silmaril-glow 1s ease-in-out infinite;
+            box-shadow: 0 0 15px #87ceeb, 0 0 30px #4169e1;
+        }
+
+        @keyframes silmaril-glow {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        /* Sword arm */
+        .sword-arm {
+            position: absolute;
+            width: 50px;
+            height: 12px;
+            top: 28px;
+            right: -20px;
+            transform-origin: left center;
+            transition: transform 0.1s ease-out;
+        }
+
+        .arm {
+            position: absolute;
+            width: 20px;
+            height: 10px;
+            background: linear-gradient(180deg, #c0c0c0 0%, #808080 100%);
+            border-radius: 3px;
+        }
+
+        /* Ringil-style sword */
+        .sword {
+            position: absolute;
+            left: 18px;
+            top: -15px;
+            width: 6px;
+            height: 45px;
+            background: linear-gradient(90deg, #e0e0e0 0%, #ffffff 50%, #c0c0c0 100%);
+            transform-origin: bottom center;
+            box-shadow: 0 0 10px rgba(255, 100, 0, 0.5);
+        }
+
+        .sword::before {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: -4px;
+            width: 14px;
+            height: 8px;
+            background: #d4af37;
+            border-radius: 2px;
+        }
+
+        /* Sword fire effect */
+        .sword::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -2px;
+            width: 10px;
+            height: 100%;
+            background: linear-gradient(180deg,
+                rgba(255, 69, 0, 0.8) 0%,
+                rgba(255, 140, 0, 0.4) 50%,
+                transparent 100%);
+            animation: sword-flame 0.2s ease-in-out infinite;
+            filter: blur(2px);
+        }
+
+        @keyframes sword-flame {
+            0%, 100% { transform: scaleY(1) translateX(0); }
+            50% { transform: scaleY(1.1) translateX(1px); }
+        }
+
+        /* Player legs */
+        .legs {
+            position: absolute;
+            bottom: 0;
+            left: 12px;
+            width: 36px;
+            height: 20px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .leg {
+            width: 12px;
+            height: 20px;
+            background: linear-gradient(180deg, #4a4a4a 0%, #2a2a2a 100%);
+            border-radius: 0 0 4px 4px;
+        }
+
+        /* Player states */
+        #player.attacking .sword-arm {
+            animation: sword-swing 0.2s ease-out;
+        }
+
+        @keyframes sword-swing {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(-120deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        #player.moving .leg:first-child {
+            animation: walk-left 0.2s ease-in-out infinite;
+        }
+
+        #player.moving .leg:last-child {
+            animation: walk-right 0.2s ease-in-out infinite;
+        }
+
+        @keyframes walk-left {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        @keyframes walk-right {
+            0%, 100% { transform: translateY(-5px); }
+            50% { transform: translateY(0); }
+        }
+
+        /* Spirit Fire Aura when damaged/enraged */
+        #player.enraged::before {
+            content: '';
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            top: -20px;
+            left: -30px;
+            background: radial-gradient(ellipse, rgba(255, 69, 0, 0.4) 0%, rgba(255, 140, 0, 0.2) 40%, transparent 70%);
+            animation: rage-aura 0.3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rage-aura {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        /* Enemy: Orc */
+        .enemy-orc {
+            width: 45px;
+            height: 55px;
+        }
+
+        .orc-body {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .orc-head {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            top: 0;
+            left: 10px;
+            background: linear-gradient(180deg, #3d5c3d 0%, #2a3d2a 100%);
+            border-radius: 40% 40% 50% 50%;
+        }
+
+        /* Orc eyes */
+        .orc-head::before,
+        .orc-head::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 4px;
+            top: 10px;
+            background: #ff0000;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #ff0000;
+        }
+
+        .orc-head::before { left: 4px; }
+        .orc-head::after { right: 4px; }
+
+        .orc-torso {
+            position: absolute;
+            width: 30px;
+            height: 25px;
+            top: 20px;
+            left: 7px;
+            background: linear-gradient(180deg, #4a3728 0%, #2d1f15 100%);
+            border-radius: 5px;
+        }
+
+        .orc-weapon {
+            position: absolute;
+            width: 8px;
+            height: 30px;
+            top: 15px;
+            right: -5px;
+            background: linear-gradient(90deg, #4a4a4a 0%, #2a2a2a 100%);
+            transform: rotate(20deg);
+        }
+
+        .orc-legs {
+            position: absolute;
+            bottom: 0;
+            left: 10px;
+            width: 25px;
+            height: 15px;
+            display: flex;
+            gap: 5px;
+        }
+
+        .orc-leg {
+            width: 10px;
+            height: 15px;
+            background: #2d1f15;
+            border-radius: 0 0 3px 3px;
+        }
+
+        /* Enemy: Balrog */
+        .enemy-balrog {
+            width: 120px;
+            height: 150px;
+        }
+
+        .balrog-body {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .balrog-shadow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, #0a0a0a 0%, transparent 70%);
+            animation: shadow-pulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes shadow-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        .balrog-form {
+            position: absolute;
+            width: 80px;
+            height: 100px;
+            top: 25px;
+            left: 20px;
+            background: linear-gradient(180deg, #1a0a0a 0%, #0d0505 100%);
+            clip-path: polygon(20% 0%, 80% 0%, 100% 30%, 90% 100%, 10% 100%, 0% 30%);
+        }
+
+        /* Balrog fire */
+        .balrog-fire {
+            position: absolute;
+            width: 120px;
+            height: 80px;
+            top: 0;
+            left: 0;
+            background: radial-gradient(ellipse at bottom,
+                rgba(255, 69, 0, 0.8) 0%,
+                rgba(255, 140, 0, 0.5) 30%,
+                rgba(255, 0, 0, 0.3) 60%,
+                transparent 100%);
+            animation: balrog-flames 0.2s ease-in-out infinite;
+            filter: blur(3px);
+        }
+
+        @keyframes balrog-flames {
+            0%, 100% { transform: scaleY(1) scaleX(1); }
+            33% { transform: scaleY(1.1) scaleX(0.95); }
+            66% { transform: scaleY(0.95) scaleX(1.05); }
+        }
+
+        /* Balrog eyes */
+        .balrog-eyes {
+            position: absolute;
+            top: 40px;
+            left: 35px;
+            width: 50px;
+            height: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .balrog-eye {
+            width: 15px;
+            height: 15px;
+            background: radial-gradient(circle, #ffff00 0%, #ff6600 50%, #ff0000 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 20px #ff6600, 0 0 40px #ff0000;
+            animation: balrog-eye-glow 0.3s ease-in-out infinite alternate;
+        }
+
+        @keyframes balrog-eye-glow {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.2); }
+        }
+
+        /* Balrog whip */
+        .balrog-whip {
+            position: absolute;
+            width: 150px;
+            height: 8px;
+            top: 70px;
+            right: -100px;
+            background: linear-gradient(90deg, #ff4500 0%, #ff6600 50%, #ff8c00 100%);
+            transform-origin: left center;
+            animation: whip-crack 2s ease-in-out infinite;
+            filter: blur(1px);
+            border-radius: 4px;
+            box-shadow: 0 0 10px #ff4500, 0 0 20px #ff6600;
+        }
+
+        @keyframes whip-crack {
+            0%, 80%, 100% { transform: rotate(0deg) scaleX(0.3); opacity: 0.3; }
+            85%, 95% { transform: rotate(-30deg) scaleX(1); opacity: 1; }
+            90% { transform: rotate(10deg) scaleX(1.1); opacity: 1; }
+        }
+
+        /* Balrog wings */
+        .balrog-wing {
+            position: absolute;
+            width: 60px;
+            height: 80px;
+            top: 20px;
+            background: linear-gradient(180deg, rgba(10, 10, 10, 0.9) 0%, transparent 100%);
+            clip-path: polygon(100% 50%, 0% 0%, 20% 50%, 0% 100%);
+            animation: wing-flap 1s ease-in-out infinite;
+        }
+
+        .balrog-wing.left {
+            left: -30px;
+            transform-origin: right center;
+        }
+
+        .balrog-wing.right {
+            right: -30px;
+            transform: scaleX(-1);
+            transform-origin: left center;
+            animation-delay: 0.1s;
+        }
+
+        @keyframes wing-flap {
+            0%, 100% { transform: scaleX(1) rotate(0deg); }
+            50% { transform: scaleX(1) rotate(-10deg); }
+        }
+
+        .balrog-wing.right {
+            animation-name: wing-flap-right;
+        }
+
+        @keyframes wing-flap-right {
+            0%, 100% { transform: scaleX(-1) rotate(0deg); }
+            50% { transform: scaleX(-1) rotate(10deg); }
+        }
+
+        /* Damage effects */
+        .entity.hit {
+            animation: hit-flash 0.1s ease-out;
+        }
+
+        @keyframes hit-flash {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(3) saturate(0); }
+        }
+
+        .entity.dying {
+            animation: death-fade 0.5s ease-out forwards;
+        }
+
+        @keyframes death-fade {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+            100% { transform: scale(0); opacity: 0; }
+        }
+
+        /* Blood/fire particles */
+        .particle {
+            position: absolute;
+            pointer-events: none;
+            border-radius: 50%;
+        }
+
+        .particle.blood {
+            background: radial-gradient(circle, #8b0000 0%, #4a0000 100%);
+            animation: particle-fly 0.5s ease-out forwards;
+        }
+
+        .particle.fire {
+            background: radial-gradient(circle, #ff6600 0%, #ff4500 50%, transparent 100%);
+            animation: particle-fly-fire 0.4s ease-out forwards;
+        }
+
+        @keyframes particle-fly {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+        }
+
+        @keyframes particle-fly-fire {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--dx), calc(var(--dy) - 30px)) scale(0); opacity: 0; }
+        }
+
+        /* UI Elements */
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        #health-bar-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 300px;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #d4af37;
+            padding: 3px;
+        }
+
+        #health-bar {
+            height: 100%;
+            background: linear-gradient(180deg, #ff4500 0%, #8b0000 100%);
+            transition: width 0.3s ease-out;
+            box-shadow: 0 0 10px rgba(255, 69, 0, 0.5);
+        }
+
+        #health-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            text-shadow: 1px 1px 2px #000;
+            font-variant: small-caps;
+            letter-spacing: 2px;
+        }
+
+        #spirit-fire-container {
+            position: absolute;
+            top: 60px;
+            left: 20px;
+            width: 300px;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #4169e1;
+            padding: 2px;
+        }
+
+        #spirit-fire-bar {
+            height: 100%;
+            background: linear-gradient(180deg, #87ceeb 0%, #4169e1 100%);
+            transition: width 0.3s ease-out;
+            box-shadow: 0 0 10px rgba(135, 206, 235, 0.5);
+            width: 0%;
+        }
+
+        #spirit-text {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 11px;
+            text-shadow: 1px 1px 2px #000;
+            font-variant: small-caps;
+            letter-spacing: 1px;
+        }
+
+        #score-display {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: #d4af37;
+            font-size: 24px;
+            text-shadow: 2px 2px 4px #000;
+            font-variant: small-caps;
+            letter-spacing: 3px;
+        }
+
+        #wave-display {
+            position: absolute;
+            top: 55px;
+            right: 20px;
+            color: #c0c0c0;
+            font-size: 16px;
+            text-shadow: 1px 1px 2px #000;
+            font-variant: small-caps;
+        }
+
+        #enemy-count {
+            position: absolute;
+            top: 80px;
+            right: 20px;
+            color: #8b0000;
+            font-size: 14px;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        /* Start/Game Over screens */
+        .screen-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            pointer-events: auto;
+        }
+
+        .screen-overlay.hidden {
+            display: none;
+        }
+
+        .screen-overlay h1 {
+            color: #d4af37;
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255, 69, 0, 0.5);
+            font-weight: normal;
+            letter-spacing: 8px;
+        }
+
+        .screen-overlay h2 {
+            color: #ff4500;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 69, 0, 0.8);
+            font-weight: normal;
+        }
+
+        .screen-overlay p {
+            color: #c0c0c0;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            max-width: 600px;
+            text-align: center;
+            line-height: 1.8;
+        }
+
+        .screen-overlay .subtitle {
+            color: #8b0000;
+            font-size: 1.5rem;
+            font-style: italic;
+            margin-bottom: 40px;
+        }
+
+        .screen-overlay .final-score {
+            color: #d4af37;
+            font-size: 2rem;
+            margin: 20px 0;
+        }
+
+        .start-btn {
+            margin-top: 30px;
+            padding: 15px 50px;
+            font-size: 1.2rem;
+            font-family: 'Georgia', serif;
+            background: linear-gradient(180deg, #8b0000 0%, #4a0000 100%);
+            color: #d4af37;
+            border: 2px solid #d4af37;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .start-btn:hover {
+            background: linear-gradient(180deg, #a00000 0%, #5a0000 100%);
+            box-shadow: 0 0 30px rgba(255, 69, 0, 0.5);
+            transform: scale(1.05);
+        }
+
+        .controls-info {
+            margin-top: 40px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .controls-info span {
+            color: #d4af37;
+            margin: 0 5px;
+        }
+
+        /* Wave announcement */
+        #wave-announcement {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #d4af37;
+            font-size: 3rem;
+            text-shadow: 0 0 30px rgba(255, 69, 0, 0.8);
+            opacity: 0;
+            pointer-events: none;
+            font-variant: small-caps;
+            letter-spacing: 5px;
+            z-index: 500;
+        }
+
+        #wave-announcement.show {
+            animation: wave-announce 2s ease-out forwards;
+        }
+
+        @keyframes wave-announce {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
+        }
+
+        /* Special ability flash */
+        #ability-flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, rgba(135, 206, 235, 0.8) 0%, transparent 70%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 400;
+        }
+
+        #ability-flash.active {
+            animation: ability-burst 0.5s ease-out;
+        }
+
+        @keyframes ability-burst {
+            0% { opacity: 1; transform: scale(0.5); }
+            100% { opacity: 0; transform: scale(2); }
+        }
+
+        /* Hit indicator at screen edges */
+        .damage-vignette {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            background: radial-gradient(ellipse at center, transparent 50%, rgba(139, 0, 0, 0.6) 100%);
+            z-index: 300;
+            transition: opacity 0.1s ease;
+        }
+
+        .damage-vignette.active {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <!-- Background layers -->
+        <div class="bg-layer mountains"></div>
+        <div class="embers" id="embers"></div>
+
+        <!-- Game world -->
+        <div id="game-world">
+            <!-- Player (Fëanor) -->
+            <div id="player" class="entity">
+                <div class="player-body">
+                    <div class="hair"></div>
+                    <div class="head"></div>
+                    <div class="crown"></div>
+                    <div class="cloak"></div>
+                    <div class="torso"></div>
+                    <div class="sword-arm">
+                        <div class="arm"></div>
+                        <div class="sword"></div>
+                    </div>
+                    <div class="legs">
+                        <div class="leg"></div>
+                        <div class="leg"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- UI Layer -->
+        <div id="ui-layer">
+            <div id="health-bar-container">
+                <div id="health-bar"></div>
+                <div id="health-text">Spirit of Fire</div>
+            </div>
+            <div id="spirit-fire-container">
+                <div id="spirit-fire-bar"></div>
+                <div id="spirit-text">Wrath of the Noldor</div>
+            </div>
+            <div id="score-display">Slain: 0</div>
+            <div id="wave-display">Wave 1</div>
+            <div id="enemy-count">Enemies: 0</div>
+            <div id="wave-announcement"></div>
+            <div id="ability-flash"></div>
+            <div class="damage-vignette" id="damage-vignette"></div>
+        </div>
+
+        <!-- Start Screen -->
+        <div class="screen-overlay" id="start-screen">
+            <h1>SPIRIT OF FIRE</h1>
+            <p class="subtitle">The Last Stand of Fëanor</p>
+            <p>
+                In the year 1497 of the Years of the Trees, Fëanor, greatest of the Noldor,
+                led his people to Middle-earth in pursuit of Morgoth. Upon the slopes of
+                Dor Daedeloth, before the gates of Angband, he fought alone against the
+                demons of the Enemy until his spirit burned away his mortal form.
+            </p>
+            <button class="start-btn" id="start-btn">Begin the Battle</button>
+            <p class="controls-info">
+                <span>WASD</span> or <span>Arrow Keys</span> to move |
+                <span>Space</span> or <span>Click</span> to attack |
+                <span>E</span> for Wrath of the Noldor (when full)
+            </p>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div class="screen-overlay hidden" id="gameover-screen">
+            <h2>FALLEN</h2>
+            <p>
+                "Then he died; but he had neither burial nor tomb,
+                for so fiery was his spirit that as it sped his body
+                fell to ash, and was borne away like smoke."
+            </p>
+            <p class="final-score">Enemies Slain: <span id="final-score">0</span></p>
+            <p>Wave Reached: <span id="final-wave">1</span></p>
+            <button class="start-btn" id="restart-btn">Rise Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Game State
+        const game = {
+            running: false,
+            width: window.innerWidth,
+            height: window.innerHeight,
+            score: 0,
+            wave: 1,
+            enemies: [],
+            particles: [],
+            keys: {},
+            mouseDown: false,
+            lastAttack: 0,
+            attackCooldown: 200,
+            lastAbility: 0,
+            abilityCooldown: 500,
+            spawnTimer: 0,
+            spawnInterval: 2000,
+            waveTimer: 0,
+            enemiesThisWave: 0,
+            enemiesKilledThisWave: 0,
+            maxEnemiesPerWave: 5
+        };
+
+        // Player State
+        const player = {
+            x: game.width / 2,
+            y: game.height / 2,
+            width: 60,
+            height: 80,
+            speed: 5,
+            health: 100,
+            maxHealth: 100,
+            spiritFire: 0,
+            maxSpiritFire: 100,
+            attackRange: 80,
+            attackDamage: 35,
+            facingRight: true,
+            isAttacking: false,
+            isMoving: false,
+            invulnerable: false,
+            invulnerableTime: 0
+        };
+
+        // DOM Elements
+        const gameWorld = document.getElementById('game-world');
+        const playerEl = document.getElementById('player');
+        const healthBar = document.getElementById('health-bar');
+        const spiritFireBar = document.getElementById('spirit-fire-bar');
+        const scoreDisplay = document.getElementById('score-display');
+        const waveDisplay = document.getElementById('wave-display');
+        const enemyCount = document.getElementById('enemy-count');
+        const waveAnnouncement = document.getElementById('wave-announcement');
+        const abilityFlash = document.getElementById('ability-flash');
+        const damageVignette = document.getElementById('damage-vignette');
+        const startScreen = document.getElementById('start-screen');
+        const gameoverScreen = document.getElementById('gameover-screen');
+        const startBtn = document.getElementById('start-btn');
+        const restartBtn = document.getElementById('restart-btn');
+        const finalScore = document.getElementById('final-score');
+        const finalWave = document.getElementById('final-wave');
+
+        // Create background embers
+        function createEmbers() {
+            const embersContainer = document.getElementById('embers');
+            for (let i = 0; i < 50; i++) {
+                const ember = document.createElement('div');
+                ember.className = 'ember';
+                ember.style.left = Math.random() * 100 + '%';
+                ember.style.animationDuration = (3 + Math.random() * 4) + 's';
+                ember.style.animationDelay = Math.random() * 5 + 's';
+                embersContainer.appendChild(ember);
+            }
+        }
+
+        // Enemy factory
+        function createEnemy(type, x, y) {
+            const enemy = {
+                id: Date.now() + Math.random(),
+                type: type,
+                x: x,
+                y: y,
+                width: type === 'balrog' ? 120 : 45,
+                height: type === 'balrog' ? 150 : 55,
+                speed: type === 'balrog' ? 1.5 : 2.5,
+                health: type === 'balrog' ? 200 : 40,
+                maxHealth: type === 'balrog' ? 200 : 40,
+                damage: type === 'balrog' ? 25 : 10,
+                attackRange: type === 'balrog' ? 100 : 50,
+                attackCooldown: type === 'balrog' ? 1500 : 800,
+                lastAttack: 0,
+                element: null
+            };
+
+            // Create DOM element
+            const el = document.createElement('div');
+            el.className = `entity enemy-${type}`;
+            el.id = `enemy-${enemy.id}`;
+
+            if (type === 'orc') {
+                el.innerHTML = `
+                    <div class="orc-body">
+                        <div class="orc-head"></div>
+                        <div class="orc-torso"></div>
+                        <div class="orc-weapon"></div>
+                        <div class="orc-legs">
+                            <div class="orc-leg"></div>
+                            <div class="orc-leg"></div>
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'balrog') {
+                el.innerHTML = `
+                    <div class="balrog-body">
+                        <div class="balrog-shadow"></div>
+                        <div class="balrog-wing left"></div>
+                        <div class="balrog-wing right"></div>
+                        <div class="balrog-fire"></div>
+                        <div class="balrog-form"></div>
+                        <div class="balrog-eyes">
+                            <div class="balrog-eye"></div>
+                            <div class="balrog-eye"></div>
+                        </div>
+                        <div class="balrog-whip"></div>
+                    </div>
+                `;
+            }
+
+            gameWorld.appendChild(el);
+            enemy.element = el;
+            return enemy;
+        }
+
+        // Spawn enemy at random edge
+        function spawnEnemy() {
+            if (game.enemiesThisWave >= game.maxEnemiesPerWave + game.wave * 2) return;
+
+            const side = Math.floor(Math.random() * 4);
+            let x, y;
+
+            switch(side) {
+                case 0: x = -50; y = Math.random() * game.height; break;
+                case 1: x = game.width + 50; y = Math.random() * game.height; break;
+                case 2: x = Math.random() * game.width; y = -50; break;
+                case 3: x = Math.random() * game.width; y = game.height + 50; break;
+            }
+
+            // Spawn balrog every 3rd wave, or randomly after wave 5
+            const type = (game.wave % 3 === 0 && game.enemiesThisWave === 0) ||
+                        (game.wave >= 5 && Math.random() < 0.15) ? 'balrog' : 'orc';
+
+            const enemy = createEnemy(type, x, y);
+            game.enemies.push(enemy);
+            game.enemiesThisWave++;
+            updateUI();
+        }
+
+        // Create particle effect
+        function createParticle(x, y, type) {
+            const particle = document.createElement('div');
+            particle.className = `particle ${type}`;
+            const size = 4 + Math.random() * 8;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 30 + Math.random() * 50;
+            particle.style.setProperty('--dx', Math.cos(angle) * distance + 'px');
+            particle.style.setProperty('--dy', Math.sin(angle) * distance + 'px');
+
+            gameWorld.appendChild(particle);
+
+            setTimeout(() => particle.remove(), 500);
+        }
+
+        // Create multiple particles
+        function createParticleBurst(x, y, type, count) {
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => createParticle(x + Math.random() * 20 - 10, y + Math.random() * 20 - 10, type), i * 20);
+            }
+        }
+
+        // Player attack
+        function playerAttack() {
+            const now = Date.now();
+            if (now - game.lastAttack < game.attackCooldown) return;
+
+            game.lastAttack = now;
+            player.isAttacking = true;
+            playerEl.classList.add('attacking');
+
+            setTimeout(() => {
+                playerEl.classList.remove('attacking');
+                player.isAttacking = false;
+            }, 200);
+
+            // Check hits on enemies
+            game.enemies.forEach(enemy => {
+                const dx = (enemy.x + enemy.width/2) - (player.x + player.width/2);
+                const dy = (enemy.y + enemy.height/2) - (player.y + player.height/2);
+                const dist = Math.sqrt(dx*dx + dy*dy);
+
+                // Check if in range and in front of player
+                const inFront = player.facingRight ? dx > -20 : dx < 20;
+
+                if (dist < player.attackRange && inFront) {
+                    damageEnemy(enemy, player.attackDamage);
+                }
+            });
+        }
+
+        // Special ability - Wrath of the Noldor
+        function useAbility() {
+            if (player.spiritFire < player.maxSpiritFire) return;
+
+            const now = Date.now();
+            if (now - game.lastAbility < game.abilityCooldown) return;
+
+            game.lastAbility = now;
+            player.spiritFire = 0;
+
+            // Visual effect
+            abilityFlash.classList.add('active');
+            setTimeout(() => abilityFlash.classList.remove('active'), 500);
+
+            // Damage all enemies
+            game.enemies.forEach(enemy => {
+                const dx = (enemy.x + enemy.width/2) - (player.x + player.width/2);
+                const dy = (enemy.y + enemy.height/2) - (player.y + player.height/2);
+                const dist = Math.sqrt(dx*dx + dy*dy);
+
+                if (dist < 300) {
+                    const damage = Math.floor(80 * (1 - dist/300));
+                    damageEnemy(enemy, damage);
+                    createParticleBurst(enemy.x + enemy.width/2, enemy.y + enemy.height/2, 'fire', 10);
+                }
+            });
+
+            updateUI();
+        }
+
+        // Damage enemy
+        function damageEnemy(enemy, damage) {
+            enemy.health -= damage;
+            enemy.element.classList.add('hit');
+            setTimeout(() => enemy.element.classList.remove('hit'), 100);
+
+            createParticleBurst(enemy.x + enemy.width/2, enemy.y + enemy.height/2,
+                enemy.type === 'balrog' ? 'fire' : 'blood', 5);
+
+            // Gain spirit fire
+            player.spiritFire = Math.min(player.maxSpiritFire, player.spiritFire + damage * 0.5);
+
+            if (enemy.health <= 0) {
+                killEnemy(enemy);
+            }
+        }
+
+        // Kill enemy
+        function killEnemy(enemy) {
+            enemy.element.classList.add('dying');
+            createParticleBurst(enemy.x + enemy.width/2, enemy.y + enemy.height/2,
+                enemy.type === 'balrog' ? 'fire' : 'blood', 15);
+
+            setTimeout(() => {
+                enemy.element.remove();
+                const idx = game.enemies.indexOf(enemy);
+                if (idx > -1) game.enemies.splice(idx, 1);
+            }, 500);
+
+            game.score++;
+            game.enemiesKilledThisWave++;
+            player.spiritFire = Math.min(player.maxSpiritFire, player.spiritFire + 10);
+            updateUI();
+
+            // Check wave completion
+            if (game.enemiesKilledThisWave >= game.maxEnemiesPerWave + game.wave * 2 && game.enemies.length === 0) {
+                nextWave();
+            }
+        }
+
+        // Damage player
+        function damagePlayer(damage) {
+            if (player.invulnerable) return;
+
+            player.health -= damage;
+            player.invulnerable = true;
+            player.invulnerableTime = Date.now();
+
+            damageVignette.classList.add('active');
+            setTimeout(() => damageVignette.classList.remove('active'), 200);
+
+            playerEl.classList.add('hit');
+            setTimeout(() => playerEl.classList.remove('hit'), 100);
+
+            if (player.health <= 0) {
+                gameOver();
+            }
+
+            updateUI();
+        }
+
+        // Next wave
+        function nextWave() {
+            game.wave++;
+            game.enemiesThisWave = 0;
+            game.enemiesKilledThisWave = 0;
+
+            // Heal player slightly
+            player.health = Math.min(player.maxHealth, player.health + 20);
+
+            // Show wave announcement
+            waveAnnouncement.textContent = `Wave ${game.wave}`;
+            waveAnnouncement.classList.add('show');
+            setTimeout(() => waveAnnouncement.classList.remove('show'), 2000);
+
+            // Add enraged state at higher waves
+            if (game.wave >= 5) {
+                playerEl.classList.add('enraged');
+            }
+
+            updateUI();
+        }
+
+        // Update enemy AI
+        function updateEnemies(deltaTime) {
+            game.enemies.forEach(enemy => {
+                if (enemy.health <= 0) return;
+
+                // Move toward player
+                const dx = (player.x + player.width/2) - (enemy.x + enemy.width/2);
+                const dy = (player.y + player.height/2) - (enemy.y + enemy.height/2);
+                const dist = Math.sqrt(dx*dx + dy*dy);
+
+                if (dist > enemy.attackRange * 0.8) {
+                    enemy.x += (dx / dist) * enemy.speed;
+                    enemy.y += (dy / dist) * enemy.speed;
+                }
+
+                // Face player
+                enemy.element.style.transform = dx < 0 ? 'scaleX(-1)' : 'scaleX(1)';
+
+                // Attack player
+                const now = Date.now();
+                if (dist < enemy.attackRange && now - enemy.lastAttack > enemy.attackCooldown) {
+                    enemy.lastAttack = now;
+                    damagePlayer(enemy.damage);
+                }
+
+                // Update position
+                enemy.element.style.left = enemy.x + 'px';
+                enemy.element.style.top = enemy.y + 'px';
+            });
+        }
+
+        // Update player
+        function updatePlayer(deltaTime) {
+            // Movement
+            let dx = 0, dy = 0;
+            if (game.keys['ArrowLeft'] || game.keys['KeyA']) dx -= 1;
+            if (game.keys['ArrowRight'] || game.keys['KeyD']) dx += 1;
+            if (game.keys['ArrowUp'] || game.keys['KeyW']) dy -= 1;
+            if (game.keys['ArrowDown'] || game.keys['KeyS']) dy += 1;
+
+            // Normalize diagonal movement
+            if (dx !== 0 && dy !== 0) {
+                dx *= 0.707;
+                dy *= 0.707;
+            }
+
+            player.x += dx * player.speed;
+            player.y += dy * player.speed;
+
+            // Bounds
+            player.x = Math.max(0, Math.min(game.width - player.width, player.x));
+            player.y = Math.max(100, Math.min(game.height - player.height - 20, player.y));
+
+            // Facing direction
+            if (dx > 0) player.facingRight = true;
+            else if (dx < 0) player.facingRight = false;
+
+            // Moving state
+            player.isMoving = dx !== 0 || dy !== 0;
+            if (player.isMoving) {
+                playerEl.classList.add('moving');
+            } else {
+                playerEl.classList.remove('moving');
+            }
+
+            // Invulnerability timer
+            if (player.invulnerable && Date.now() - player.invulnerableTime > 500) {
+                player.invulnerable = false;
+            }
+
+            // Update position
+            playerEl.style.left = player.x + 'px';
+            playerEl.style.top = player.y + 'px';
+            playerEl.style.transform = player.facingRight ? 'scaleX(1)' : 'scaleX(-1)';
+
+            // Attack input
+            if (game.keys['Space'] || game.mouseDown) {
+                playerAttack();
+            }
+
+            // Ability input
+            if (game.keys['KeyE']) {
+                useAbility();
+            }
+        }
+
+        // Spawn timer
+        function updateSpawning(deltaTime) {
+            game.spawnTimer += deltaTime;
+            const interval = Math.max(500, game.spawnInterval - game.wave * 100);
+
+            if (game.spawnTimer >= interval) {
+                game.spawnTimer = 0;
+                spawnEnemy();
+            }
+        }
+
+        // Update UI
+        function updateUI() {
+            healthBar.style.width = (player.health / player.maxHealth * 100) + '%';
+            spiritFireBar.style.width = (player.spiritFire / player.maxSpiritFire * 100) + '%';
+            scoreDisplay.textContent = `Slain: ${game.score}`;
+            waveDisplay.textContent = `Wave ${game.wave}`;
+            enemyCount.textContent = `Enemies: ${game.enemies.length}`;
+        }
+
+        // Game loop
+        let lastTime = 0;
+        function gameLoop(timestamp) {
+            if (!game.running) return;
+
+            const deltaTime = timestamp - lastTime;
+            lastTime = timestamp;
+
+            updatePlayer(deltaTime);
+            updateEnemies(deltaTime);
+            updateSpawning(deltaTime);
+            updateUI();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Start game
+        function startGame() {
+            game.running = true;
+            game.score = 0;
+            game.wave = 1;
+            game.enemies.forEach(e => e.element.remove());
+            game.enemies = [];
+            game.enemiesThisWave = 0;
+            game.enemiesKilledThisWave = 0;
+            game.spawnTimer = 0;
+
+            player.x = game.width / 2 - player.width / 2;
+            player.y = game.height / 2;
+            player.health = player.maxHealth;
+            player.spiritFire = 0;
+
+            playerEl.classList.remove('enraged');
+            playerEl.style.left = player.x + 'px';
+            playerEl.style.top = player.y + 'px';
+
+            startScreen.classList.add('hidden');
+            gameoverScreen.classList.add('hidden');
+
+            // Show wave 1 announcement
+            waveAnnouncement.textContent = 'Wave 1';
+            waveAnnouncement.classList.add('show');
+            setTimeout(() => waveAnnouncement.classList.remove('show'), 2000);
+
+            updateUI();
+            lastTime = performance.now();
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Game over
+        function gameOver() {
+            game.running = false;
+            finalScore.textContent = game.score;
+            finalWave.textContent = game.wave;
+            gameoverScreen.classList.remove('hidden');
+        }
+
+        // Event listeners
+        document.addEventListener('keydown', e => {
+            game.keys[e.code] = true;
+            if (e.code === 'Space') e.preventDefault();
+        });
+
+        document.addEventListener('keyup', e => {
+            game.keys[e.code] = false;
+        });
+
+        document.addEventListener('mousedown', e => {
+            if (game.running) {
+                game.mouseDown = true;
+            }
+        });
+
+        document.addEventListener('mouseup', e => {
+            game.mouseDown = false;
+        });
+
+        window.addEventListener('resize', () => {
+            game.width = window.innerWidth;
+            game.height = window.innerHeight;
+        });
+
+        startBtn.addEventListener('click', startGame);
+        restartBtn.addEventListener('click', startGame);
+
+        // Initialize
+        createEmbers();
+    </script>
+</body>
+</html>

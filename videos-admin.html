@@ -86,6 +86,18 @@
             background: var(--color-text-light);
         }
 
+        .btn-secondary {
+            background: var(--color-bg);
+            color: var(--color-text);
+            border: 1px solid var(--color-border);
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-secondary:hover {
+            background: var(--color-border);
+        }
+
         .btn-danger {
             background: #dc3545;
             color: white;
@@ -95,6 +107,24 @@
 
         .btn-danger:hover {
             background: #c82333;
+        }
+
+        .btn-icon {
+            background: var(--color-bg);
+            border: 1px solid var(--color-border);
+            padding: 0.5rem;
+            font-size: 1rem;
+            line-height: 1;
+            min-width: 36px;
+        }
+
+        .btn-icon:hover {
+            background: var(--color-border);
+        }
+
+        .btn-icon:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
         }
 
         .video-preview {
@@ -138,7 +168,7 @@
 
         .video-list-item {
             display: grid;
-            grid-template-columns: 160px 1fr auto;
+            grid-template-columns: auto 160px 1fr auto;
             gap: var(--spacing-md);
             align-items: center;
             background: white;
@@ -146,10 +176,25 @@
             padding: var(--spacing-sm);
         }
 
+        .video-list-item.editing {
+            background: #fffef0;
+            border-color: #d4af37;
+        }
+
+        .reorder-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
         .video-list-thumbnail {
             width: 160px;
             height: 90px;
             object-fit: cover;
+        }
+
+        .video-list-info {
+            min-width: 0;
         }
 
         .video-list-info h3 {
@@ -161,6 +206,21 @@
         .video-list-info p {
             font-size: 0.85rem;
             color: var(--color-text-lighter);
+        }
+
+        .video-list-info .edit-title-input {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--color-border);
+            margin-bottom: 0.5rem;
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .empty-state {
@@ -187,15 +247,24 @@
             border: 1px solid #f5c6cb;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
             .video-list-item {
                 grid-template-columns: 1fr;
+            }
+
+            .reorder-buttons {
+                flex-direction: row;
+                order: 3;
             }
 
             .video-list-thumbnail {
                 width: 100%;
                 height: auto;
                 aspect-ratio: 16/9;
+            }
+
+            .video-actions {
+                order: 4;
             }
 
             .form-row {
@@ -275,6 +344,7 @@
             const messageContainer = document.getElementById('message-container');
 
             let currentVideoId = null;
+            let editingIndex = null;
 
             // Extract YouTube video ID from various URL formats
             function extractVideoId(url) {
@@ -317,26 +387,146 @@
                 videos.forEach((video, index) => {
                     const item = document.createElement('div');
                     item.className = 'video-list-item';
+                    item.dataset.index = index;
+
+                    const isFirst = index === 0;
+                    const isLast = index === videos.length - 1;
+
                     item.innerHTML = `
+                        <div class="reorder-buttons">
+                            <button class="btn btn-icon move-up" data-index="${index}" ${isFirst ? 'disabled' : ''} title="Move up">&#9650;</button>
+                            <button class="btn btn-icon move-down" data-index="${index}" ${isLast ? 'disabled' : ''} title="Move down">&#9660;</button>
+                        </div>
                         <img class="video-list-thumbnail"
                              src="https://img.youtube.com/vi/${video.videoId}/mqdefault.jpg"
                              alt="${video.title}">
                         <div class="video-list-info">
-                            <h3>${video.title}</h3>
+                            <h3 class="video-title-display">${video.title}</h3>
                             <p>youtube.com/watch?v=${video.videoId}</p>
                         </div>
-                        <button class="btn btn-danger" data-index="${index}">Remove</button>
+                        <div class="video-actions">
+                            <button class="btn btn-secondary edit-btn" data-index="${index}">Edit</button>
+                            <button class="btn btn-danger remove-btn" data-index="${index}">Remove</button>
+                        </div>
                     `;
                     videosList.appendChild(item);
                 });
 
-                // Add remove event listeners
-                videosList.querySelectorAll('.btn-danger').forEach(btn => {
+                // Add event listeners
+                videosList.querySelectorAll('.move-up').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.dataset.index);
+                        moveVideo(index, -1);
+                    });
+                });
+
+                videosList.querySelectorAll('.move-down').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.dataset.index);
+                        moveVideo(index, 1);
+                    });
+                });
+
+                videosList.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const index = parseInt(e.target.dataset.index);
+                        startEditing(index);
+                    });
+                });
+
+                videosList.querySelectorAll('.remove-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const index = parseInt(e.target.dataset.index);
                         removeVideo(index);
                     });
                 });
+            }
+
+            // Start editing a video
+            function startEditing(index) {
+                const videos = JSON.parse(localStorage.getItem('siteVideos') || '[]');
+                const video = videos[index];
+                const item = videosList.querySelector(`[data-index="${index}"]`);
+
+                // Cancel any other editing
+                if (editingIndex !== null && editingIndex !== index) {
+                    cancelEditing(editingIndex);
+                }
+
+                editingIndex = index;
+                item.classList.add('editing');
+
+                const infoDiv = item.querySelector('.video-list-info');
+                const titleDisplay = infoDiv.querySelector('.video-title-display');
+                const currentTitle = video.title;
+
+                titleDisplay.innerHTML = `
+                    <input type="text" class="edit-title-input" value="${currentTitle}">
+                `;
+
+                const actionsDiv = item.querySelector('.video-actions');
+                actionsDiv.innerHTML = `
+                    <button class="btn btn-primary save-btn" data-index="${index}" style="padding: 0.5rem 1rem; font-size: 0.75rem;">Save</button>
+                    <button class="btn btn-secondary cancel-btn" data-index="${index}">Cancel</button>
+                `;
+
+                // Focus the input
+                const input = infoDiv.querySelector('.edit-title-input');
+                input.focus();
+                input.select();
+
+                // Add event listeners for save/cancel
+                actionsDiv.querySelector('.save-btn').addEventListener('click', () => {
+                    saveEdit(index, input.value.trim());
+                });
+
+                actionsDiv.querySelector('.cancel-btn').addEventListener('click', () => {
+                    cancelEditing(index);
+                });
+
+                // Save on Enter, cancel on Escape
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        saveEdit(index, input.value.trim());
+                    } else if (e.key === 'Escape') {
+                        cancelEditing(index);
+                    }
+                });
+            }
+
+            // Save edit
+            function saveEdit(index, newTitle) {
+                if (!newTitle) {
+                    showMessage('Title cannot be empty.', 'error');
+                    return;
+                }
+
+                const videos = JSON.parse(localStorage.getItem('siteVideos') || '[]');
+                videos[index].title = newTitle;
+                saveVideos(videos);
+                editingIndex = null;
+                loadVideos();
+                showMessage('Video updated.', 'success');
+            }
+
+            // Cancel editing
+            function cancelEditing(index) {
+                editingIndex = null;
+                loadVideos();
+            }
+
+            // Move video up or down
+            function moveVideo(index, direction) {
+                const videos = JSON.parse(localStorage.getItem('siteVideos') || '[]');
+                const newIndex = index + direction;
+
+                if (newIndex < 0 || newIndex >= videos.length) return;
+
+                // Swap videos
+                [videos[index], videos[newIndex]] = [videos[newIndex], videos[index]];
+
+                saveVideos(videos);
+                loadVideos();
             }
 
             // Save videos to localStorage
@@ -368,6 +558,8 @@
 
             // Remove video
             function removeVideo(index) {
+                if (!confirm('Are you sure you want to remove this video?')) return;
+
                 const videos = JSON.parse(localStorage.getItem('siteVideos') || '[]');
                 videos.splice(index, 1);
                 saveVideos(videos);

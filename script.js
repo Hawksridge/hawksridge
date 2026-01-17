@@ -5,7 +5,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const toggleOptions = document.querySelectorAll('.toggle-option');
     const galleryItems = document.querySelectorAll('.gallery-item');
-    let currentFilter = 'color';
+    let currentFilter = 'bw';
 
     // Filter gallery
     function filterGallery(filter) {
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize filter on page load
     if (toggleOptions.length > 0) {
-        filterGallery('color');
+        filterGallery('bw');
     }
 
     // Toggle option click handlers

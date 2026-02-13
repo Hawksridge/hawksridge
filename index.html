@@ -42,9 +42,9 @@
         <section class="gallery-section">
             <!-- Gallery Toggle -->
             <div class="gallery-toggle">
-                <span class="toggle-option active" data-filter="bw">B&W</span>
+                <button class="toggle-option active" data-filter="bw">B&W</button>
                 <span class="toggle-divider">|</span>
-                <span class="toggle-option" data-filter="color">Color</span>
+                <button class="toggle-option" data-filter="color">Color</button>
             </div>
 
             <div class="gallery-grid">
@@ -336,6 +336,8 @@
 
     <!-- Lightbox -->
     <div class="lightbox" id="lightbox">
+        <div class="lightbox-spinner"></div>
+        <div class="swipe-hint" id="swipe-hint">Swipe to navigate</div>
         <button class="lightbox-close" aria-label="Close">&times;</button>
         <button class="lightbox-prev" aria-label="Previous">&lsaquo;</button>
         <button class="lightbox-next" aria-label="Next">&rsaquo;</button>

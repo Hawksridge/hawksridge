@@ -29,15 +29,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Initialize filter on page load
+    // Initialize filter from URL hash or default to 'bw'
     if (toggleOptions.length > 0) {
-        filterGallery('bw');
+        const hash = window.location.hash.slice(1);
+        filterGallery(hash === 'color' ? 'color' : 'bw');
+        document.querySelector('.gallery-grid').classList.add('initialized');
     }
 
     // Toggle option click handlers
     toggleOptions.forEach(opt => {
         opt.addEventListener('click', () => {
-            filterGallery(opt.dataset.filter);
+            const filter = opt.dataset.filter;
+            window.location.hash = filter;
+            filterGallery(filter);
         });
     });
 
@@ -73,6 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Open lightbox
+    let isFirstOpen = true;
+
     function openLightbox(item) {
         const visibleItems = getVisibleItems();
         currentIndex = visibleItems.indexOf(item);
@@ -88,6 +94,12 @@ document.addEventListener('DOMContentLoaded', () => {
             imgSrc = imgSrc.replace(/\/(\d+)\/(\d+)/, '/1200/800');
         }
 
+        // Show loading spinner while full-res loads
+        lightbox.classList.add('loading');
+        lightboxImg.onload = () => {
+            lightbox.classList.remove('loading');
+        };
+
         lightboxImg.src = imgSrc;
         lightboxImg.alt = img.alt;
         lightboxTitle.textContent = title ? title.textContent : '';
@@ -95,6 +107,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         lightbox.classList.add('active');
         document.body.style.overflow = 'hidden';
+
+        // Show swipe hint on first open on touch devices
+        if (isFirstOpen && 'ontouchstart' in window) {
+            isFirstOpen = false;
+            const hint = document.getElementById('swipe-hint');
+            if (hint) {
+                hint.classList.add('visible');
+                setTimeout(() => hint.classList.remove('visible'), 2000);
+            }
+        }
 
         preloadAdjacent(currentIndex);
     }

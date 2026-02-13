@@ -32,8 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize filter from URL hash or default to 'bw'
     if (toggleOptions.length > 0) {
         const hash = window.location.hash.slice(1);
-        filterGallery(hash === 'color' ? 'color' : 'bw');
-        document.querySelector('.gallery-grid').classList.add('initialized');
+        if (hash === 'color') {
+            filterGallery('color');
+        }
     }
 
     // Toggle option click handlers

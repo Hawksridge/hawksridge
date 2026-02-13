@@ -60,6 +60,18 @@ document.addEventListener('DOMContentLoaded', () => {
         return Array.from(galleryItems).filter(item => !item.classList.contains('hidden'));
     }
 
+    // Preload adjacent lightbox images
+    function preloadAdjacent(index) {
+        const visibleItems = getVisibleItems();
+        [-1, 1].forEach(offset => {
+            const i = (index + offset + visibleItems.length) % visibleItems.length;
+            const adjImg = visibleItems[i].querySelector('img');
+            const src = adjImg.dataset.full || adjImg.src;
+            const preload = new Image();
+            preload.src = src;
+        });
+    }
+
     // Open lightbox
     function openLightbox(item) {
         const visibleItems = getVisibleItems();
@@ -83,6 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         lightbox.classList.add('active');
         document.body.style.overflow = 'hidden';
+
+        preloadAdjacent(currentIndex);
     }
 
     // Close lightbox

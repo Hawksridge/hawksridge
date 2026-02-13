@@ -295,19 +295,4 @@ if (header) {
     }, { passive: true });
 }
 
-// ============================================
-// Show page after fonts are loaded
-// ============================================
 
-function showPage() {
-    document.body.classList.add('ready');
-}
-
-if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(showPage);
-} else {
-    showPage();
-}
-
-// Fallback: show page after 1s even if fonts haven't loaded
-setTimeout(showPage, 1000);

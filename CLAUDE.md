@@ -18,22 +18,20 @@ add/edit/reorder photos → **Export HTML** → paste the output into the chat).
 2. **Generate thumbnails.** Run `./generate-thumbs.sh`. It creates 600px-wide thumbs
    in `images/thumbs/` for any new/updated originals (idempotent — safe to re-run).
 
-3. **Normalize every entry to the site's format.** The admin export is NOT drop-in.
-   For each `<div class="gallery-item ...">`, the `<img>` must end up as:
+3. **Add `width`/`height` to every `<img>`.** As of commit `6e80bb9` the admin export
+   already emits the live-site format — thumb path in `src`, full-size in `data-full`,
+   and the `hidden` class on color items. The ONE thing it can't add is image
+   dimensions (the browser tool doesn't have the thumbnail's pixel size, since thumbs
+   are generated afterward by `generate-thumbs.sh`). So each `<img>` must end up as:
    ```html
    <img src="images/thumbs/<file>.jpg" data-full="images/<file>.jpg" alt="<title>" loading="lazy" width="<W>" height="<H>">
    ```
-   - `src` → the **thumb** path; `data-full` → the **full-size** path. The admin export
-     often gives a full-size path in `src` (for freshly added photos) and omits
-     `data-full` entirely — fix both.
-   - `width`/`height` → the **thumb's** pixel dimensions. Get them with
-     `sips -g pixelWidth -g pixelHeight images/thumbs/<file>.jpg`. These prevent layout
-     shift and must be present.
-   - **Add the `hidden` class to every `data-type="color"` item** (e.g.
-     `class="gallery-item landscape hidden"`). The admin export drops it; it's required
-     to avoid the gallery flicker fixed in commit `f4824b9` (B&W shows by default).
-     Do NOT add `hidden` to `data-type="bw"` items.
+   - Get dimensions with `sips -g pixelWidth -g pixelHeight images/thumbs/<file>.jpg`.
+     These prevent layout shift and must be present on every entry.
    - Preserve the order and the `landscape`/`portrait`/`square` class the user chose.
+   - Sanity-check the export already did its part: every `data-type="color"` item should
+     have the `hidden` class (B&W shows by default — the flicker fix in `f4824b9`), and
+     every `<img>` should have `data-full`. If an older export is missing these, add them.
 
 4. **Replace the gallery.** Swap the entire contents of the `<div class="gallery-grid">`
    block in `index.html` with the normalized entries (keep the `<!-- COLOR PHOTOS -->`

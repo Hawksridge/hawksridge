@@ -18,7 +18,7 @@ add/edit/reorder photos → **Export HTML** → paste the output into the chat).
 2. **Generate thumbnails.** Run `./generate-thumbs.sh`. It creates 600px-wide thumbs
    in `images/thumbs/` for any new/updated originals (idempotent — safe to re-run).
 
-3. **Add `width`/`height` to every `<img>`.** As of commit `6e80bb9` the admin export
+3. **Add `width`/`height` to every `<img>`.** As of commit `a2c8fdf` the admin export
    already emits the live-site format — thumb path in `src`, full-size in `data-full`,
    and the `hidden` class on color items. The ONE thing it can't add is image
    dimensions (the browser tool doesn't have the thumbnail's pixel size, since thumbs

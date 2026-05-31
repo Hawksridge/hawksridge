@@ -854,8 +854,25 @@
         }
 
         function generatePhotoHTML(photo) {
-            return `<div class="gallery-item ${photo.dimension}" data-type="${photo.type}">
-    <img src="${photo.url}" alt="${photo.title}" loading="lazy">
+            // Emit the live-site format directly: thumbnail in src, full-size in
+            // data-full, and the `hidden` class on color items (B&W shows by default,
+            // so tagging color avoids the gallery flicker). The url may come in as
+            // either a thumb path or a full-size path depending on how the photo was
+            // added, so normalize both ways.
+            let thumbSrc, fullSrc;
+            if (photo.url.startsWith('images/thumbs/')) {
+                thumbSrc = photo.url;
+                fullSrc = photo.url.replace('images/thumbs/', 'images/');
+            } else if (photo.url.startsWith('images/')) {
+                fullSrc = photo.url;
+                thumbSrc = photo.url.replace('images/', 'images/thumbs/');
+            } else {
+                // External / unexpected URL — use as-is for both.
+                thumbSrc = fullSrc = photo.url;
+            }
+            const hiddenClass = photo.type === 'color' ? ' hidden' : '';
+            return `<div class="gallery-item ${photo.dimension}${hiddenClass}" data-type="${photo.type}">
+    <img src="${thumbSrc}" data-full="${fullSrc}" alt="${photo.title}" loading="lazy">
     <div class="gallery-overlay">
         <span class="photo-title">${photo.title}</span>
         <span class="photo-location">${photo.location}</span>

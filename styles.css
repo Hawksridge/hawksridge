@@ -1002,3 +1002,70 @@ p {
         grid-template-columns: 1fr;
     }
 }
+
+/* ============================================
+   Laptop/desktop: single-column stacked gallery
+   (each photo shown one at a time, uncropped).
+   Mobile (<= 767px) keeps the existing grid above.
+   ============================================ */
+@media (min-width: 768px) {
+    .gallery-grid {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-xl);
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 0 var(--spacing-md);
+    }
+
+    .gallery-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        background-color: transparent;
+        overflow: visible;
+    }
+
+    /* Cancel the grid span rules so everything is one per row */
+    .gallery-item.landscape,
+    .gallery-item.portrait,
+    .gallery-item.square {
+        grid-column: auto;
+        grid-row: auto;
+    }
+
+    .gallery-item.hidden {
+        display: none;
+    }
+
+    /* Natural aspect ratio, no cropping; cap tall photos to the viewport */
+    .gallery-item img {
+        width: auto;
+        height: auto;
+        max-width: 100%;
+        max-height: 85vh;
+        object-fit: contain;
+    }
+
+    .gallery-item:hover img {
+        transform: none;
+    }
+
+    /* Caption sits below the photo, always visible (not a hover overlay) */
+    .gallery-overlay {
+        position: static;
+        opacity: 1;
+        background: none;
+        color: var(--color-text);
+        padding: 0;
+        margin-top: var(--spacing-sm);
+        text-align: center;
+        align-items: center;
+    }
+
+    .gallery-overlay .photo-location {
+        color: var(--color-text-lighter);
+    }
+}

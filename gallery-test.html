@@ -10,11 +10,11 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500&display=optional" rel="stylesheet">
     <style>
-        /* Single-column, uncropped, full-bleed edge-to-edge stacked layout (test page) */
+        /* Single-column, uncropped stacked layout (test page) */
         .stack {
-            max-width: none;
-            margin: 0;
-            padding: 0;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
             display: flex;
             flex-direction: column;
             gap: var(--spacing-xl);
@@ -26,20 +26,15 @@
         }
         .stack-item img {
             display: block;
-            width: 100%;            /* full-bleed: span the entire viewport width */
-            height: auto;           /* preserve aspect ratio, no cropping */
-            max-height: 92vh;       /* keep tall portraits from overflowing the viewport */
-            object-fit: contain;
-        }
-        /* Portraits would be huge at full width — center them at natural width instead */
-        .stack-item.portrait img {
-            width: auto;
             max-width: 100%;
+            height: auto;          /* preserve aspect ratio, no cropping */
+            max-height: 85vh;       /* keep tall portraits from overflowing the viewport */
+            width: auto;
+            object-fit: contain;
         }
         .stack-item figcaption {
             margin-top: var(--spacing-sm);
             text-align: center;
-            padding: 0 var(--spacing-md);
         }
         .stack-title {
             display: block;
@@ -98,119 +93,119 @@
 
             <div class="stack-section active" data-type="bw">
                 <div class="stack">
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/ArtofNature_Benediction.jpg" alt="Benediction" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Benediction</span>
                     <span class="stack-location">Serengeti, Tanzania</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/DSC09479.jpg" alt="Untitled" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Untitled</span>
                     <span class="stack-location">Pottuvil, Sri Lanka</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/A7409035.jpg" alt="The Road" loading="lazy">
                 <figcaption>
                     <span class="stack-title">The Road</span>
                     <span class="stack-location">Approaching Milford Sound, New Zealand</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item portrait">
+            <figure class="stack-item">
                 <img src="images/DSC03816-Edit-Edit.jpg" alt="An Afternoon of Music" loading="lazy">
                 <figcaption>
                     <span class="stack-title">An Afternoon of Music</span>
                     <span class="stack-location">Sahara Desert, Morocco</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item square">
+            <figure class="stack-item">
                 <img src="images/_DSC2356.jpg" alt="From The Depths" loading="lazy">
                 <figcaption>
                     <span class="stack-title">From The Depths</span>
                     <span class="stack-location">Ambergris Caye, Belize</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/DSC08322-Edit.jpg" alt="New Year's Party" loading="lazy">
                 <figcaption>
                     <span class="stack-title">New Year's Party</span>
                     <span class="stack-location">Northern Laos</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/DSC04147_8_9_fused-Edit.jpg" alt="Above the Fog" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Above the Fog</span>
                     <span class="stack-location">Marin Headlands, California</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item square">
+            <figure class="stack-item">
                 <img src="images/A7405228.jpg" alt="The Hunter" loading="lazy">
                 <figcaption>
                     <span class="stack-title">The Hunter</span>
                     <span class="stack-location">Eyasi Valley, Tanzania</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item portrait">
+            <figure class="stack-item">
                 <img src="images/DSC00969-Edit-2-Edit-3-Edit-Edit-Edit-Edit-2-Edit.jpg" alt="Serenity" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Serenity</span>
                     <span class="stack-location">Hakone, Japan</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item square">
+            <figure class="stack-item">
                 <img src="images/DSC05778-Edit-Edit-Edit.jpg" alt="The Big Boss" loading="lazy">
                 <figcaption>
                     <span class="stack-title">The Big Boss</span>
                     <span class="stack-location">Zamezi River, Zambia</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/Pierce-Ranch.jpg" alt="Pierce Ranch" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Pierce Ranch</span>
                     <span class="stack-location">Point Reyes, California</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item portrait">
+            <figure class="stack-item">
                 <img src="images/DSC08509-Edit-Edit.jpg" alt="Snake Man" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Snake Man</span>
                     <span class="stack-location">Bangkok, Thailand</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item portrait">
+            <figure class="stack-item">
                 <img src="images/A7408609-Edit-3-Edit.jpg" alt="Decisions" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Decisions</span>
                     <span class="stack-location">Near Kaikoura, New Zealand</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/A7406472.jpg" alt="The Valley" loading="lazy">
                 <figcaption>
                     <span class="stack-title">The Valley</span>
                     <span class="stack-location">Cortina d'Ampezzo, Italy</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/A7404703-Edit-2-Edit.jpg" alt="Rush For Life" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Rush For Life</span>
                     <span class="stack-location">Mara River, Tanzania</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/DSC03935-Edit.jpg" alt="Solitude" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Solitude</span>
                     <span class="stack-location">Humboldt Coast, California</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item portrait">
+            <figure class="stack-item">
                 <img src="images/DSC00658-Edit-Edit.jpg" alt="Life Anew" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Life Anew</span>
@@ -222,126 +217,126 @@
 
             <div class="stack-section" data-type="color">
                 <div class="stack">
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/DSC03214-Edit-Edit.jpg" alt="The Watcher" loading="lazy">
                 <figcaption>
                     <span class="stack-title">The Watcher</span>
                     <span class="stack-location">The Sahara, Morocco</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item portrait">
+            <figure class="stack-item">
                 <img src="images/Tule-Elk.jpg" alt="Tule Elk" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Tule Elk</span>
                     <span class="stack-location">Tomales Point, California</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/DSC05160-HDR-Edit.jpg" alt="Luminous Evening" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Luminous Evening</span>
                     <span class="stack-location">Positano, Italy</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/thailand2013-211.jpg" alt="Roses" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Roses</span>
                     <span class="stack-location">Bangkok, Thailand</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/DSC07196.jpg" alt="The Stillness" loading="lazy">
                 <figcaption>
                     <span class="stack-title">The Stillness</span>
                     <span class="stack-location">Nicasio, California</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item portrait">
+            <figure class="stack-item">
                 <img src="images/DSC05018.jpg" alt="Eruption" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Eruption</span>
                     <span class="stack-location">Zambezi River, Zambia</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item square">
+            <figure class="stack-item">
                 <img src="images/DSC00085.jpg" alt="The Bowler" loading="lazy">
                 <figcaption>
                     <span class="stack-title">The Bowler</span>
                     <span class="stack-location">Nuwara Eliya, Sri Lanka</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/DSC05008.jpg" alt="Protected" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Protected</span>
                     <span class="stack-location">Hwange, Zimbabwe</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/Golden-Gate.jpg" alt="Golden Gate" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Golden Gate</span>
                     <span class="stack-location">San Francisco, California</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item square">
+            <figure class="stack-item">
                 <img src="images/gorilla.jpg" alt="Hairy Man" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Hairy Man</span>
                     <span class="stack-location">Virunga Mtns, Uganda</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/DSC06882.jpg" alt="Crimson Evening" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Crimson Evening</span>
                     <span class="stack-location">Okavango Delta, Botswana</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/DSC09380-Edit-Edit.jpg" alt="Red-Shouldered Hawk" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Red-Shouldered Hawk</span>
                     <span class="stack-location">Novato, California</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/DSC05333.jpg" alt="The Moment" loading="lazy">
                 <figcaption>
                     <span class="stack-title">The Moment</span>
                     <span class="stack-location">Okavango Delta, Botswana</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/DSC04279_80_81_fused-Edit-2-Edit-2.jpg" alt="Under The Pier" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Under The Pier</span>
                     <span class="stack-location">Hanalaei, Hawaii</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/DSC02357.jpg" alt="The Slug" loading="lazy">
                 <figcaption>
                     <span class="stack-title">The Slug</span>
                     <span class="stack-location">Corte Madera, California</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item portrait">
+            <figure class="stack-item">
                 <img src="images/DSC02899-Edit.jpg" alt="Bee Eaters" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Bee Eaters</span>
                     <span class="stack-location">Zambia</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/DSC08775-Edit-Edit-Edit-Edit-2-Edit.jpg" alt="Fushimi-Inari" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Fushimi-Inari</span>
                     <span class="stack-location">Kyoto, Japan</span>
                 </figcaption>
             </figure>
-            <figure class="stack-item landscape">
+            <figure class="stack-item">
                 <img src="images/DSC02701.jpg" alt="Alpine Perfection" loading="lazy">
                 <figcaption>
                     <span class="stack-title">Alpine Perfection</span>

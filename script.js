@@ -5,7 +5,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     const toggleOptions = document.querySelectorAll('.toggle-option');
     const galleryItems = document.querySelectorAll('.gallery-item');
-    let currentFilter = 'bw';
+    let currentFilter = 'color';
 
     // Filter gallery
     function filterGallery(filter) {
@@ -29,11 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Initialize filter from URL hash or default to 'bw'
+    // Initialize filter from URL hash or default to 'color'
     if (toggleOptions.length > 0) {
         const hash = window.location.hash.slice(1);
-        if (hash === 'color') {
-            filterGallery('color');
+        if (hash === 'bw') {
+            filterGallery('bw');
         }
     }
 

@@ -535,7 +535,7 @@
         // Photos array - will be loaded from index.html
         let photos = [];
 
-        let currentFilter = 'bw';
+        let currentFilter = 'color';
         let editingId = null;
         let nextId = 1;
         let draggedItem = null;
@@ -855,8 +855,8 @@
 
         function generatePhotoHTML(photo) {
             // Emit the live-site format directly: thumbnail in src, full-size in
-            // data-full, and the `hidden` class on color items (B&W shows by default,
-            // so tagging color avoids the gallery flicker). The url may come in as
+            // data-full, and the `hidden` class on B&W items (color shows by default,
+            // so tagging B&W avoids the gallery flicker). The url may come in as
             // either a thumb path or a full-size path depending on how the photo was
             // added, so normalize both ways.
             let thumbSrc, fullSrc;
@@ -870,7 +870,7 @@
                 // External / unexpected URL — use as-is for both.
                 thumbSrc = fullSrc = photo.url;
             }
-            const hiddenClass = photo.type === 'color' ? ' hidden' : '';
+            const hiddenClass = photo.type === 'bw' ? ' hidden' : '';
             return `<div class="gallery-item ${photo.dimension}${hiddenClass}" data-type="${photo.type}">
     <img src="${thumbSrc}" data-full="${fullSrc}" alt="${photo.title}" loading="lazy">
     <div class="gallery-overlay">

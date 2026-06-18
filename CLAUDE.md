@@ -37,8 +37,8 @@ add/edit/reorder photos → **Export HTML** → paste the output into the chat).
    - `srcset` lets laptop/desktop load the sharp 1600px `large/` image while mobile keeps
      the 900px thumb. `data-full` (full-size original) still feeds the lightbox — leave it.
    - Preserve the order and the `landscape`/`portrait`/`square` class the user chose.
-   - Sanity-check the export already did its part: every `data-type="color"` item should
-     have the `hidden` class (B&W shows by default — the flicker fix in `f4824b9`), and
+   - Sanity-check the export already did its part: every `data-type="bw"` item should
+     have the `hidden` class (color shows by default — the flicker fix in `f4824b9`), and
      every `<img>` should have `data-full`. If an older export is missing these, add them.
 
 4. **Replace the gallery.** Swap the entire contents of the `<div class="gallery-grid">`

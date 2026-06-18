@@ -15,19 +15,27 @@ add/edit/reorder photos → **Export HTML** → paste the output into the chat).
    (the user copies them there). If a referenced `images/<file>.jpg` is missing, stop
    and tell the user which file to add.
 
-2. **Generate thumbnails.** Run `./generate-thumbs.sh`. It creates 600px-wide thumbs
-   in `images/thumbs/` for any new/updated originals (idempotent — safe to re-run).
+2. **Generate image sizes.** Run `./generate-thumbs.sh`. For any new/updated original it
+   creates TWO sizes (idempotent — safe to re-run):
+   - `images/thumbs/<file>.jpg` — 900px, used by the grid (mobile) and as the `src`/small
+     `srcset` candidate.
+   - `images/large/<file>.jpg` — 1600px, used by the stacked single-column layout shown on
+     laptop/desktop (`@media (min-width: 768px)` in `styles.css`).
+   Both directories must end up committed.
 
-3. **Add `width`/`height` to every `<img>`.** As of commit `a2c8fdf` the admin export
-   already emits the live-site format — thumb path in `src`, full-size in `data-full`,
-   and the `hidden` class on color items. The ONE thing it can't add is image
-   dimensions (the browser tool doesn't have the thumbnail's pixel size, since thumbs
-   are generated afterward by `generate-thumbs.sh`). So each `<img>` must end up as:
+3. **Add `width`/`height` AND `srcset` to every `<img>`.** As of commit `a2c8fdf` the admin
+   export emits most of the live-site format — thumb path in `src`, full-size in `data-full`,
+   and the `hidden` class on color items. It can't add image dimensions or the responsive
+   `srcset` (the browser tool doesn't have the thumb's pixel size, and thumbs/large are
+   generated afterward by `generate-thumbs.sh`). So each `<img>` must end up as:
    ```html
-   <img src="images/thumbs/<file>.jpg" data-full="images/<file>.jpg" alt="<title>" loading="lazy" width="<W>" height="<H>">
+   <img src="images/thumbs/<file>.jpg" data-full="images/<file>.jpg" alt="<title>" loading="lazy" srcset="images/thumbs/<file>.jpg 900w, images/large/<file>.jpg 1600w" sizes="(min-width: 768px) min(1000px, 100vw), 100vw" width="<W>" height="<H>">
    ```
-   - Get dimensions with `sips -g pixelWidth -g pixelHeight images/thumbs/<file>.jpg`.
-     These prevent layout shift and must be present on every entry.
+   - `width`/`height` are the **900px thumb's** pixel dimensions. Get them with
+     `sips -g pixelWidth -g pixelHeight images/thumbs/<file>.jpg`. These prevent layout
+     shift and must be present on every entry.
+   - `srcset` lets laptop/desktop load the sharp 1600px `large/` image while mobile keeps
+     the 900px thumb. `data-full` (full-size original) still feeds the lightbox — leave it.
    - Preserve the order and the `landscape`/`portrait`/`square` class the user chose.
    - Sanity-check the export already did its part: every `data-type="color"` item should
      have the `hidden` class (B&W shows by default — the flicker fix in `f4824b9`), and
@@ -42,13 +50,18 @@ add/edit/reorder photos → **Export HTML** → paste the output into the chat).
    editing, briefly tell the user which photos were added / removed / renamed so they
    can confirm.
 
-6. **Commit** the new image files, their thumbs, and `index.html` together. Then push
-   if auth is working (see below).
+6. **Commit and push.** Commit the new originals in `images/`, their `images/thumbs/` and
+   `images/large/` versions, and `index.html` together — then `git push origin main`
+   without asking. The live site is the user's only preview, so always push.
 
 ## Deploy / push
 
-Remote is HTTPS (`github.com/hawksridge/hawksridge`). GitHub Pages rebuilds within
-~1 min of a push to `main`. Pushing requires valid credentials in the macOS keychain
-(a fine-grained PAT with **Contents: Read and write**, or an SSH key). If a push/fetch
-fails with "Invalid username or token," the saved credential is bad and the user must
-re-authenticate once in their own terminal before pushes can succeed.
+Remote is SSH (`git@github.com:Hawksridge/hawksridge.git`). An ed25519 key on the user's
+Mac authenticates non-interactively, so `git push origin main` just works — no PAT or
+keychain dance. GitHub Pages rebuilds within ~1 min of a push to `main`. Only if SSH
+itself breaks should you fall back to credential troubleshooting.
+
+Shape commands to match the permission allowlist: run `git add` / `git commit` / `git push`
+as separate calls (not `&&`-chained), and use `git commit -m "title" -m "body"` rather than
+a `$(cat <<EOF …)` heredoc — command substitution and chaining defeat the allowlist and
+trigger needless prompts.
